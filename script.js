@@ -13,10 +13,16 @@
 
         getURLParams() {
             const params = new URLSearchParams(window.location.search);
+            const year = params.get("year");
+            const sem = params.get("sem");
+            const className = params.get("class");
+
+            if (!year && !sem && !className) return null;
+
             return {
-                year: params.get("year") || "2025-2026",
-                sem: params.get("sem") || "1",
-                className: params.get("class") || "M01",
+                year: year || "2025-2026",
+                sem: sem || "1",
+                className: className || "M06",
             };
         },
 
@@ -145,7 +151,7 @@
             const teacher = CONFIG.classes[params.className]?.teacher || "Professeur";
             const dateStr = new Date().toLocaleDateString("fr-FR");
             const semStr = params.sem == "1" ? "1ER" : "2ND";
-            const yearStr = params.year.replace("-", "/");
+            const yearStr = (params.year || "2025-2026").replace("-", "/");
 
             students.forEach((student) => {
                 const pageClone = this.bulletinTemplate.content.cloneNode(true);
@@ -205,51 +211,68 @@
         },
 
         setStatus(text) {
-            this.status.innerText = text;
+            this.status.innerHTML = text;
         },
 
-        enableFallback(path) {
-            this.status.innerHTML = `<span class="error-msg">⚠️ Erreur de chargement pour <b>${path}</b></span>`;
-            document.getElementById("fallback-ui").classList.remove("hidden");
+        showManualUI() {
+            document.getElementById("manual-ui").classList.remove("hidden");
         },
     };
 
     // --- APPLICATION OVERSEER ---
     const BulletinsApp = {
         async init() {
+            // Manual Upload Listener (always active)
+            document.getElementById("manualFile").addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const manualParams = {
+                    year: document.getElementById("input-year").value || "2025-2026",
+                    sem: document.getElementById("input-sem").value || "1",
+                    className: document.getElementById("input-class").value || "M06",
+                };
+
+                UIController.setStatus("Parsing du fichier manuel...");
+                DataService.parseFile(
+                    file,
+                    (rawData) => this.handleData(rawData, manualParams),
+                    (err) => UIController.setStatus(`<span class="error-msg">Erreur : ${err}</span>`),
+                );
+            });
+
             const params = Utils.getURLParams();
+            if (!params) {
+                UIController.setStatus("Veuillez sélectionner un fichier CSV");
+                UIController.showManualUI();
+                return;
+            }
+
+            // Auto-fetch mode
             const yearUnderscore = params.year.replace("-", "_");
             const path = `data/${params.year}/SEMESTRE ${params.sem}/[AMI] NOTES - ${yearUnderscore} - SEMESTRE ${params.sem} - ${params.className}.csv`;
 
-            UIController.setStatus(`Chargement de ${path}...`);
+            UIController.setStatus(`Chargement auto : <b>${params.className}</b>...`);
 
             DataService.fetchCSV(
                 path,
                 (rawData) => this.handleData(rawData, params),
-                () => UIController.enableFallback(path),
+                () => {
+                    UIController.setStatus(`<span class="error-msg">Fichier introuvable : <b>${params.className}</b>. Utilisez le mode manuel.</span>`);
+                    UIController.showManualUI();
+                },
             );
-
-            // Manual Upload Listener
-            document.getElementById("manualFile").addEventListener("change", (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                DataService.parseFile(
-                    file,
-                    (rawData) => this.handleData(rawData, params),
-                    (err) => alert(`Erreur de lecture : ${err}`),
-                );
-            });
         },
 
         handleData(rawData, params) {
             const processed = GradeEngine.processRaw(rawData);
             if (!processed) {
-                UIController.setStatus("Format CSV invalide (données insuffisantes).");
+                UIController.setStatus(`<span class="error-msg">Format CSV invalide.</span>`);
                 return;
             }
 
             UIController.render(processed, params);
-            UIController.setStatus(`Prêt ! ${processed.students.length} bulletins générés pour la classe ${params.className}.`);
+            UIController.setStatus(`Bulletins générés : <b>${params.className}</b> (${processed.students.length} élèves)`);
         },
     };
 
