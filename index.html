@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Générateur de Bulletins - AMI</title>
+
+    <!-- Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Amiri:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Application Files -->
+    <link rel="stylesheet" href="style.css" />
+    <script src="config.js" defer></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <!-- Top UI (Hidden on Print) -->
+    <div class="controls no-print">
+      <div id="status">Chargement des données...</div>
+      <div id="fallback-ui" class="hidden">
+        <p class="error-msg">
+          Restriction de sécurité détectée. Veuillez sélectionner le fichier CSV manuellement :
+        </p>
+        <input type="file" id="manualFile" accept=".csv" />
+      </div>
+    </div>
+
+    <!-- Generated Pages Container -->
+    <div id="container"></div>
+
+    <!-- Bulletin Page Template -->
+    <template id="bulletin-template">
+      <div class="page">
+        <header class="header">
+          <div class="logo-box"><img src="AMI.png" class="header-logo" /></div>
+          <div class="header-center">
+            <h1 class="header-title">Association Musulmane de l'Inde</h1>
+            <p class="header-address">
+              6, 7, 8 PLACE ALFRED DE MUSSET - 93120 LA COURNEUVE<br />
+              01.48.36.48.66 / ami93120@gmail.com
+            </p>
+          </div>
+          <div class="logo-box"><img src="AMI.png" class="header-logo" /></div>
+        </header>
+
+        <div class="separator-line"></div>
+
+        <section class="info-section">
+          <div class="info-row">
+            <div class="info-left">
+              <span class="info-label">Nom :</span> <span class="info-value js-student-name"></span>
+            </div>
+            <div class="info-right">
+              <span class="info-label">Professeur :</span>
+              <span class="info-value js-teacher-name"></span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-left">
+              <span class="info-label">Prénom :</span>
+              <span class="info-value js-student-firstname"></span>
+            </div>
+            <div class="info-right">
+              <span class="info-label">Classe :</span>
+              <span class="info-value js-class-name"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="separator-line"></div>
+
+        <h2 class="bulletin-title js-bulletin-title"></h2>
+
+        <table class="grade-table">
+          <thead>
+            <tr>
+              <th class="col-matieres" rowspan="2">MATIÈRES</th>
+              <th class="col-eleve">ÉLÈVE</th>
+              <th colspan="3">CLASSE</th>
+              <th class="col-appreciations" rowspan="2">APPRÉCIATIONS GÉNÉRALES</th>
+            </tr>
+            <tr>
+              <th class="js-sem-header"></th>
+              <th class="col-classe-moy">MOY.</th>
+              <th class="col-classe-min">MIN.</th>
+              <th class="col-classe-max">MAX.</th>
+            </tr>
+          </thead>
+          <tbody class="js-table-body">
+            <!-- Rows injected here -->
+          </tbody>
+          <tfoot>
+            <tr class="footer-row">
+              <td class="total-cell">MOYENNE GÉNÉRALE :</td>
+              <td class="cell-note cell-avg-val js-avg-20"></td>
+              <td class="cell-stats-box js-student-count-cell" colspan="3" rowspan="2"></td>
+              <td class="cell-footer-merged js-mention-display" rowspan="2"></td>
+            </tr>
+            <tr class="footer-row">
+              <td class="rang-cell cell-footer-bottom">RANG :</td>
+              <td class="cell-note cell-footer-bottom js-rang-display"></td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <footer class="bottom-section">
+          <div class="appr-box">
+            <span class="appr-title">Appréciation du Professeur :</span>
+            <div class="appr-checkbox-row"><span class="checkbox"></span> Félicitations</div>
+            <div class="appr-checkbox-row"><span class="checkbox"></span> Encouragements</div>
+            <div class="appr-checkbox-row">
+              <span class="checkbox"></span> Avertissement de travail
+            </div>
+            <div class="appr-checkbox-row">
+              <span class="checkbox"></span> Avertissement de comportement
+            </div>
+          </div>
+          <div class="visa-box">Visa du Professeur</div>
+        </footer>
+
+        <div class="legal-strip">
+          <div>Bulletin à conserver précieusement. Aucun duplicata ne sera délivré.</div>
+          <div class="js-date-bottom"></div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Table Row Template -->
+    <template id="row-template">
+      <tr>
+        <td class="cell-matiere">
+          <div class="matiere-combined js-row-matiere-ar-trans"></div>
+          <div class="matiere-sub js-row-matiere-fr"></div>
+        </td>
+        <td class="cell-note js-row-note"></td>
+        <td class="cell-stat js-row-avg"></td>
+        <td class="cell-stat js-row-min"></td>
+        <td class="cell-stat js-row-max"></td>
+        <td></td>
+      </tr>
+    </template>
+  </body>
+</html>

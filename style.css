@@ -1,0 +1,363 @@
+/**
+ * AMI Report Card Styling
+ * Optimisé pour Impression A4 (Portrait)
+ */
+
+:root {
+  --font-main: "Inter", sans-serif;
+  --font-ar: "Amiri", serif;
+  --color-black: #000;
+  --color-grey-dark: #444;
+  --color-grey-light: #666;
+  --color-bg-stats: #f9f9f9;
+}
+
+/* Global Reset */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  margin: 0;
+  background-color: #555; /* Preview Background */
+  color: var(--color-black);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* UI Controls */
+.controls {
+  background: white;
+  padding: 1rem;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+}
+
+.hidden {
+  display: none;
+}
+
+.error-msg {
+  margin: 0 0 10px 0;
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+@media print {
+  .no-print {
+    display: none;
+  }
+  body {
+    background: white;
+    margin: 0;
+  }
+}
+
+/* A4 Page Layout */
+.page {
+  background: white;
+  width: 210mm;
+  height: 297mm;
+  padding: 10mm 15mm;
+  margin: 60px auto 20px auto;
+  position: relative;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  page-break-after: always;
+}
+
+@media print {
+  .page {
+    margin: 0;
+    box-shadow: none;
+    width: 100%;
+    height: 297mm;
+  }
+}
+
+/* --- Header Component --- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2mm;
+}
+
+.header-center {
+  text-align: center;
+  flex-grow: 1;
+  margin: 0 10mm;
+}
+
+.header-title {
+  font-weight: 600;
+  font-size: 21px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.header-address {
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.logo-box {
+  width: 25mm;
+  height: 15mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-logo {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.separator-line {
+  border-bottom: 2px solid black; /* User requested 2px below header */
+  margin: 2mm 0 4mm 0;
+}
+
+/* --- Global Info Rows --- */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2mm;
+  font-size: 16px;
+}
+
+.info-label {
+  margin-right: 5px;
+}
+
+.info-value {
+  font-weight: 600;
+}
+
+.info-left,
+.info-right {
+  text-align: left;
+  width: 50%;
+}
+
+.bulletin-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 6mm 0 8mm 0;
+}
+
+/* --- Grade Table Component --- */
+.grade-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  border: 2px solid black; /* Table outline 2px */
+}
+
+.grade-table th,
+.grade-table td {
+  border: 1px solid black;
+  padding: 4px;
+}
+
+.grade-table th {
+  text-align: center;
+  font-weight: 600;
+  background-color: white;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+/* Thick border below header */
+.grade-table thead tr:last-child th,
+.grade-table thead th[rowspan="2"] {
+  border-bottom: 2px solid black;
+}
+
+/* Table Column Widths */
+.col-matieres {
+  width: 20%;
+}
+.col-eleve {
+  width: 15%;
+}
+.col-classe-moy,
+.col-classe-min,
+.col-classe-max {
+  width: 8%;
+}
+.col-appreciations {
+  width: 41%;
+}
+
+/* 2px Side Borders for "ÉLÈVE" Column */
+.col-eleve,
+.js-sem-header,
+.grade-table td:nth-child(2) {
+  border-left: 2px solid black !important;
+  border-right: 2px solid black !important;
+}
+
+/* 2px Left Border for "APPRÉCIATIONS GÉNÉRALES" Column */
+.col-appreciations,
+.grade-table td:nth-child(6) {
+  border-left: 2px solid black !important;
+}
+
+.grade-table tbody tr {
+  height: 15mm;
+}
+
+/* Row separation for Discipline */
+.row-discipline td {
+  border-top: 2px solid black !important;
+}
+
+/* Cell Specific Styling */
+.cell-matiere {
+  text-align: left;
+  padding: 5px 8px;
+  vertical-align: middle;
+}
+
+.matiere-combined {
+  font-family: var(--font-ar), var(--font-main);
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.matiere-sub {
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--color-grey-dark);
+}
+
+.cell-note {
+  text-align: center;
+  font-weight: 500;
+  font-size: 15px;
+  vertical-align: middle;
+}
+
+.bareme-small {
+  color: var(--color-grey-light);
+}
+
+.cell-stat {
+  text-align: center;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+/* --- Footer Table Styling --- */
+.footer-row td {
+  font-weight: 600;
+  border-top: 2px solid black; /* Thick border above the footer block */
+  background-color: white;
+  padding: 8px 4px;
+}
+
+/* Reduce border between Average and Rank */
+.footer-row + .footer-row td {
+  border-top: 1px solid black;
+}
+
+.total-cell,
+.rang-cell {
+  text-align: left;
+  padding-left: 10px;
+  text-transform: uppercase;
+}
+
+.cell-avg-val {
+  border-top: 2px solid black;
+}
+.cell-stats-box {
+  background: var(--color-bg-stats);
+  font-size: 11px;
+  text-align: center;
+}
+
+.cell-footer-bottom {
+  border-top: none;
+  border-bottom: 2px solid black; /* Outline for footer */
+}
+
+.cell-footer-merged {
+  border-left: 2px solid black !important;
+  border-bottom: 2px solid black;
+  padding-left: 10px;
+  font-weight: normal;
+}
+
+/* --- Bottom Section Component --- */
+.bottom-section {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10mm;
+  gap: 10mm;
+}
+
+.appr-box {
+  border: 1px solid black;
+  width: 45%;
+  padding: 3mm;
+  font-size: 13px;
+}
+
+.appr-title {
+  text-decoration: underline;
+  font-weight: 600;
+  margin-bottom: 3mm;
+  display: block;
+}
+
+.appr-checkbox-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2mm;
+}
+
+.checkbox {
+  width: 4mm;
+  height: 4mm;
+  border: 2px solid black;
+  margin-right: 3mm;
+}
+
+.visa-box {
+  width: 40%;
+  text-align: right;
+  padding-top: 5mm;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.legal-strip {
+  border-top: 1px solid black;
+  padding-top: 1mm;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+/* Utility */
+.sup-no-caps {
+  text-transform: none;
+}
