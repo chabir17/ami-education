@@ -143,6 +143,7 @@
         status: document.getElementById("status"),
         bulletinTemplate: document.getElementById("bulletin-template"),
         rowTemplate: document.getElementById("row-template"),
+        classPicker: document.getElementById("class-picker"),
 
         render(data, params) {
             this.container.innerHTML = "";
@@ -217,28 +218,86 @@
         showManualUI() {
             document.getElementById("manual-ui").classList.remove("hidden");
         },
+
+        populateClassPicker() {
+            if (!this.classPicker) return;
+            this.classPicker.innerHTML = "";
+
+            Object.keys(CONFIG.classes).forEach((className, idx) => {
+                const item = document.createElement("div");
+                item.className = "picker-item";
+                item.innerHTML = `
+                    <input type="radio" name="className" id="class-${className}" value="${className}" ${idx === 0 ? "checked" : ""} />
+                    <label for="class-${className}">${className}</label>
+                `;
+                this.classPicker.appendChild(item);
+            });
+        },
     };
 
     // --- APPLICATION OVERSEER ---
     const BulletinsApp = {
         async init() {
-            // Manual Upload Listener (always active)
-            document.getElementById("manualFile").addEventListener("change", (e) => {
-                const file = e.target.files[0];
+            UIController.populateClassPicker();
+
+            const dropzone = document.getElementById("dropzone");
+            const fileInput = document.getElementById("manualFile");
+            const fileInfo = document.getElementById("file-info");
+            const dropzoneContent = dropzone.querySelector(".dropzone-content");
+            const resetBtn = document.getElementById("reset-file");
+
+            const handleFile = (file) => {
                 if (!file) return;
 
+                // Show file info
+                fileInfo.querySelector(".file-name").textContent = file.name;
+                fileInfo.classList.remove("hidden");
+                dropzoneContent.classList.add("hidden");
+                dropzone.classList.add("has-file");
+
                 const manualParams = {
-                    year: document.getElementById("input-year").value || "2025-2026",
-                    sem: document.getElementById("input-sem").value || "1",
-                    className: document.getElementById("input-class").value || "M06",
+                    year: document.getElementById("input-year").value,
+                    sem: document.querySelector('input[name="sem"]:checked').value,
+                    className: document.querySelector('input[name="className"]:checked').value,
                 };
 
-                UIController.setStatus("Parsing du fichier manuel...");
+                UIController.setStatus(`Lecture de <b>${file.name}</b>...`);
                 DataService.parseFile(
                     file,
                     (rawData) => this.handleData(rawData, manualParams),
                     (err) => UIController.setStatus(`<span class="error-msg">Erreur : ${err}</span>`),
                 );
+            };
+
+            // Drag and Drop listeners
+            dropzone.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                dropzone.classList.add("dragover");
+            });
+
+            dropzone.addEventListener("dragleave", () => {
+                dropzone.classList.remove("dragover");
+            });
+
+            dropzone.addEventListener("drop", (e) => {
+                e.preventDefault();
+                dropzone.classList.remove("dragover");
+                const file = e.dataTransfer.files[0];
+                handleFile(file);
+            });
+
+            fileInput.addEventListener("change", (e) => {
+                handleFile(e.target.files[0]);
+            });
+
+            resetBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                fileInput.value = "";
+                fileInfo.classList.add("hidden");
+                dropzoneContent.classList.remove("hidden");
+                dropzone.classList.remove("has-file");
+                UIController.setStatus("Veuillez sélectionner un fichier CSV");
+                UIController.container.innerHTML = "";
             });
 
             const params = Utils.getURLParams();

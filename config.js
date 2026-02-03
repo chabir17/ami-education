@@ -12,7 +12,6 @@ const CONFIG = {
         M06: { teacher: "Mawlana Djafar" },
         M07: { teacher: "Mawlana Haja" },
         M08: { teacher: "Mawlana Ismaïl" },
-        M09: { teacher: "Mawlana M09" },
         M10A: { teacher: "Mawlana Zubair" },
         M10B: { teacher: "Mawlana Fayçal" },
     },
