@@ -1,246 +1,257 @@
 /**
  * Logic for AMI School Report Card Generation
+ * Modular Refactor
  */
 
 (function () {
-  // --- 1. CONFIG & URL PARAMS ---
-  const params = new URLSearchParams(window.location.search);
-  const paramYear = params.get("year") || "2025-2026";
-  const paramSem = params.get("sem") || "1";
-  const paramClass = params.get("class") || "M01";
+    // --- UTILS ---
+    const Utils = {
+        formatNum(num, dec = 2) {
+            if (num === undefined || num === null || isNaN(num)) return "-";
+            return parseFloat(num.toFixed(dec)).toString().replace(".", ",");
+        },
 
-  const yearUnderscore = paramYear.replace("-", "_");
-  const csvPath = `data/${paramYear}/SEMESTRE ${paramSem}/[AMI] NOTES - ${yearUnderscore} - SEMESTRE ${paramSem} - ${paramClass}.csv`;
+        getURLParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                year: params.get("year") || "2025-2026",
+                sem: params.get("sem") || "1",
+                className: params.get("class") || "M01",
+            };
+        },
 
-  const statusEl = document.getElementById("status");
-  statusEl.innerText = `Chargement de ${csvPath}...`;
+        isIgnored(colName) {
+            return CONFIG.ignoredColumns.includes(colName.toUpperCase().trim());
+        },
+    };
 
-  // --- 2. DATA FETCHING ---
-  function loadData() {
-    Papa.parse(csvPath, {
-      download: true,
-      header: false,
-      skipEmptyLines: true,
-      complete: (results) => {
-        if (results.errors.length > 0) {
-          console.warn("PapaParse Errors:", results.errors);
-          enableFallback();
-          return;
-        }
-        processCSV(results.data);
-      },
-      error: (err) => {
-        console.error("Fetch Error:", err);
-        enableFallback();
-      },
-    });
-  }
+    // --- DATA SERVICE ---
+    const DataService = {
+        fetchCSV(path, onComplete, onError) {
+            Papa.parse(path, {
+                download: true,
+                header: false,
+                skipEmptyLines: true,
+                complete: (results) => {
+                    if (results.errors.length > 0) {
+                        console.warn("PapaParse Errors:", results.errors);
+                        onError();
+                        return;
+                    }
+                    onComplete(results.data);
+                },
+                error: onError,
+            });
+        },
 
-  function enableFallback() {
-    statusEl.innerHTML = `<span class="error-msg">⚠️ Erreur de chargement pour <b>${csvPath}</b></span>`;
-    document.getElementById("fallback-ui").classList.remove("hidden");
-  }
+        parseFile(file, onComplete, onError) {
+            Papa.parse(file, {
+                header: false,
+                skipEmptyLines: true,
+                complete: (results) => onComplete(results.data),
+                error: (err) => onError(err.message),
+            });
+        },
+    };
 
-  document.getElementById("manualFile").addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    // --- GRADE ENGINE ---
+    const GradeEngine = {
+        processRaw(rawData) {
+            if (rawData.length < 3) return null;
 
-    Papa.parse(file, {
-      header: false,
-      skipEmptyLines: true,
-      complete: (results) => processCSV(results.data),
-      error: (err) => alert(`Erreur de lecture : ${err.message}`),
-    });
-  });
+            const headers = rawData[0];
+            const baremes = rawData[1] || [];
+            const students = rawData.slice(2).filter((s) => s[1] && s[1].trim() !== "");
 
-  // --- 3. DATA PROCESSING ---
-  function processCSV(rawData) {
-    if (rawData.length < 3) {
-      statusEl.innerText = "Format CSV invalide (données insuffisantes).";
-      return;
-    }
+            const stats = {};
+            headers.forEach((h, idx) => {
+                if (!h || Utils.isIgnored(h)) return;
 
-    const headers = rawData[0];
-    const baremes = rawData[1] || [];
-    const students = rawData.slice(2).filter((s) => s[1] && s[1].trim() !== "");
+                const entries = students
+                    .map((s) => s[idx])
+                    .filter((v) => v && !isNaN(v.toString().replace(",", ".").trim()))
+                    .map((v) => parseFloat(v.toString().replace(",", ".").trim()));
 
-    const stats = {};
-    headers.forEach((h, idx) => {
-      if (!h || isIgnoredColumn(h)) return;
+                const maxScore = parseFloat((baremes[idx] || CONFIG.defaultMaxScore).toString().replace(",", "."));
 
-      const entries = students
-        .map((s) => s[idx])
-        .filter((v) => v && !isNaN(v.toString().replace(",", ".").trim()))
-        .map((v) => parseFloat(v.toString().replace(",", ".").trim()));
+                if (entries.length > 0) {
+                    stats[idx] = {
+                        min: Math.min(...entries),
+                        max: Math.max(...entries),
+                        avg: entries.reduce((a, b) => a + b, 0) / entries.length,
+                        bareme: isNaN(maxScore) ? 20 : maxScore,
+                    };
+                }
+            });
 
-      const maxScore = parseFloat(
-        (baremes[idx] || CONFIG.defaultMaxScore).toString().replace(",", "."),
-      );
+            return { headers, students, stats };
+        },
 
-      if (entries.length > 0) {
-        stats[idx] = {
-          min: Math.min(...entries),
-          max: Math.max(...entries),
-          avg: entries.reduce((a, b) => a + b, 0) / entries.length,
-          bareme: isNaN(maxScore) ? 20 : maxScore,
-        };
-      }
-    });
+        calculateStudentMetrics(student, headers, stats) {
+            const totalMax = Object.values(stats).reduce((acc, s) => acc + s.bareme, 0);
 
-    renderBulletins(students, headers, stats);
-    statusEl.innerText = `Prêt ! ${students.length} bulletins générés pour la classe ${paramClass}.`;
-  }
+            // Indicators
+            const moyIdx = headers.findIndex((h) => {
+                const hh = h?.toUpperCase() || "";
+                return ["MOYENNE", "MOYENNE GÉNÉRALE", "MOYENNE GENERALE", "MOY", "MOY G.", "MOY. G.", "MOY G"].includes(hh);
+            });
+            const rangIdx = headers.findIndex((h) => h?.toUpperCase() === "RANG");
+            const mentionIdx = headers.findIndex((h) => h?.toUpperCase() === "MENTION");
 
-  function isIgnoredColumn(colName) {
-    return CONFIG.ignoredColumns.includes(colName.toUpperCase().trim());
-  }
+            const moyRaw = moyIdx > -1 ? student[moyIdx] : null;
+            const rangRaw = rangIdx > -1 ? student[rangIdx] : "-";
+            const mentionRaw = mentionIdx > -1 ? student[mentionIdx] : "";
 
-  function formatNum(num, dec = 2) {
-    if (num === undefined || num === null || isNaN(num)) return "-";
-    return parseFloat(num.toFixed(dec)).toString().replace(".", ",");
-  }
+            // Rank String with sup
+            const isValidRank = rangRaw && rangRaw !== "-" && !rangRaw.toString().includes("#DIV/0!");
+            const rangStr = isValidRank ? (rangRaw == "1" ? `1<sup>er</sup>` : `${rangRaw}<sup>ème</sup>`) : "-";
 
-  // --- 4. UI RENDERING ---
-  function renderBulletins(students, headers, stats) {
-    const container = document.getElementById("container");
-    const bulletinTemplate = document.getElementById("bulletin-template");
-    const rowTemplate = document.getElementById("row-template");
+            // Average Logic
+            let studentSum = 0;
+            let hasNotes = false;
+            headers.forEach((h, i) => {
+                if (!h || Utils.isIgnored(h) || !stats[i]) return;
+                const valStr = student[i]?.toString().replace(",", ".").trim();
+                if (valStr && !isNaN(valStr)) {
+                    studentSum += parseFloat(valStr);
+                    hasNotes = true;
+                }
+            });
+            const calculatedAvg = hasNotes && totalMax > 0 ? (studentSum / totalMax) * 20 : null;
 
-    container.innerHTML = "";
+            const isValidMoy = moyRaw !== null && moyRaw !== "" && moyRaw !== "-" && !moyRaw.toString().includes("#DIV/0!");
 
-    const teacher = CONFIG.classes[paramClass]?.teacher || "Professeur";
-    const dateStr = new Date().toLocaleDateString("fr-FR");
-    const semStrDisplay = paramSem == "1" ? "1ER" : "2ND";
-    const yearStr = paramYear.replace("-", "/");
+            const finalAvg = isValidMoy ? moyRaw.toString().replace(".", ",") : Utils.formatNum(calculatedAvg);
 
-    const totalMax = Object.values(stats).reduce((acc, s) => acc + s.bareme, 0);
+            return {
+                avg: finalAvg,
+                rank: rangStr,
+                mention: mentionRaw,
+            };
+        },
+    };
 
-    students.forEach((student) => {
-      const clone = bulletinTemplate.content.cloneNode(true);
+    // --- UI CONTROLLER ---
+    const UIController = {
+        container: document.getElementById("container"),
+        status: document.getElementById("status"),
+        bulletinTemplate: document.getElementById("bulletin-template"),
+        rowTemplate: document.getElementById("row-template"),
 
-      // Populate basic info
-      clone.querySelector(".js-student-name").textContent = student[1] || "";
-      clone.querySelector(".js-student-firstname").textContent = student[2] || "";
-      clone.querySelector(".js-teacher-name").textContent = teacher;
-      clone.querySelector(".js-class-name").textContent = paramClass;
-      clone.querySelector(".js-date-bottom").textContent = dateStr;
-      clone.querySelector(".js-bulletin-title").textContent =
-        `BULLETIN DU ${semStrDisplay} SEMESTRE ${yearStr}`;
-      clone.querySelector(".js-sem-header").textContent = `${semStrDisplay} SEM.`;
-      clone.querySelector(".js-student-count-cell").textContent = `(${students.length} ÉLÈVES)`;
+        render(data, params) {
+            this.container.innerHTML = "";
+            const { headers, students, stats } = data;
 
-      // Metrics
-      const totalIdx = headers.findIndex((h) => h?.toUpperCase() === "TOTAL");
-      const rangIdx = headers.findIndex((h) => h?.toUpperCase() === "RANG");
-      const moyIdx = headers.findIndex((h) => {
-        const hh = h?.toUpperCase() || "";
-        return [
-          "MOYENNE",
-          "MOYENNE GÉNÉRALE",
-          "MOYENNE GENERALE",
-          "MOY",
-          "MOY G.",
-          "MOY. G.",
-          "MOY G",
-        ].includes(hh);
-      });
-      const mentionIdx = headers.findIndex((h) => h?.toUpperCase() === "MENTION");
+            const teacher = CONFIG.classes[params.className]?.teacher || "Professeur";
+            const dateStr = new Date().toLocaleDateString("fr-FR");
+            const semStr = params.sem == "1" ? "1ER" : "2ND";
+            const yearStr = params.year.replace("-", "/");
 
-      const totalValRaw = totalIdx > -1 ? student[totalIdx] : "-";
-      const rangRaw = rangIdx > -1 ? student[rangIdx] : "-";
-      const moyRaw = moyIdx > -1 ? student[moyIdx] : null;
-      const mentionRaw = mentionIdx > -1 ? student[mentionIdx] : null;
+            students.forEach((student) => {
+                const pageClone = this.bulletinTemplate.content.cloneNode(true);
+                const metrics = GradeEngine.calculateStudentMetrics(student, headers, stats);
 
-      const isValidRank = rangRaw && rangRaw !== "-" && !rangRaw.toString().includes("#DIV/0!");
-      const rangDisplay = isValidRank
-        ? rangRaw == "1"
-          ? `1<sup>er</sup>`
-          : `${rangRaw}<sup>ème</sup>`
-        : "-";
+                // Header and Identity
+                pageClone.querySelector(".js-student-name").textContent = student[1] || "";
+                pageClone.querySelector(".js-student-firstname").textContent = student[2] || "";
+                pageClone.querySelector(".js-teacher-name").textContent = teacher;
+                pageClone.querySelector(".js-class-name").textContent = params.className;
+                pageClone.querySelector(".js-date-bottom").textContent = dateStr;
+                pageClone.querySelector(".js-bulletin-title").textContent = `BULLETIN DU ${semStr} SEMESTRE ${yearStr}`;
+                pageClone.querySelector(".js-sem-header").textContent = `${semStr} SEM.`;
+                pageClone.querySelector(".js-student-count-cell").textContent = `(${students.length} ÉLÈVES)`;
 
-      clone.querySelector(".js-rang-display").innerHTML = rangDisplay;
+                // Footer Metrics
+                pageClone.querySelector(".js-rang-display").innerHTML = metrics.rank;
+                pageClone.querySelector(".js-avg-20").textContent = `${metrics.avg} / 20`;
+                pageClone.querySelector(".js-mention-display").innerHTML = metrics.mention ? `Mention: <b>${metrics.mention}</b>` : "";
 
-      let avg20 = "-";
-      let mention = mentionRaw || ""; // Only use CSV mention, no automatic calculation
+                // Rows
+                const tbody = pageClone.querySelector(".js-table-body");
+                let disciplineOccurred = false;
 
-      // 1. Calculate Average from Subjects (Robust fallback)
-      let studentSum = 0;
-      let hasNotes = false;
-      headers.forEach((h, i) => {
-        if (!h || isIgnoredColumn(h) || !stats[i]) return;
-        const valStr = student[i]?.toString().replace(",", ".").trim();
-        if (valStr && !isNaN(valStr)) {
-          studentSum += parseFloat(valStr);
-          hasNotes = true;
-        }
-      });
-      const calculatedAvg = hasNotes && totalMax > 0 ? (studentSum / totalMax) * 20 : null;
+                headers.forEach((h, i) => {
+                    if (!h || Utils.isIgnored(h)) return;
 
-      // 2. Decide which Average to use (Priority: CSV column > Calculated)
-      const isValidMoy =
-        moyRaw !== null &&
-        moyRaw !== "" &&
-        moyRaw !== "-" &&
-        !moyRaw.toString().includes("#DIV/0!");
+                    const hKey = h.toUpperCase().trim();
+                    const isBehavior = hKey === "AKHLAQ" || hKey === "HUDUR";
+                    const subject = CONFIG.subjects[hKey] || { ar: h, trans: h, fr: "" };
+                    const stat = stats[i] || { bareme: 20, avg: "-", min: "-", max: "-" };
+                    const score = student[i];
+                    const isAbs = score?.toLowerCase().includes("abs");
 
-      if (isValidMoy) {
-        avg20 = moyRaw.toString().replace(".", ",");
-      } else if (calculatedAvg !== null) {
-        avg20 = formatNum(calculatedAvg);
-      }
+                    const scoreDisplay = isAbs ? "ABS" : `${(score || "-").toString().replace(".", ",")}<small class="bareme-small">/${stat.bareme}</small>`;
 
-      clone.querySelector(".js-avg-20").textContent = `${avg20} / 20`;
-      clone.querySelector(".js-mention-display").innerHTML = mention
-        ? `Mention: <b>${mention}</b>`
-        : "";
+                    const rowClone = this.rowTemplate.content.cloneNode(true);
+                    const tr = rowClone.querySelector("tr");
 
-      // Rows
-      const tableBody = clone.querySelector(".js-table-body");
-      let disciplineStarted = false;
+                    if (isBehavior && !disciplineOccurred) {
+                        tr.classList.add("row-discipline");
+                        disciplineOccurred = true;
+                    }
 
-      headers.forEach((h, i) => {
-        if (!h || isIgnoredColumn(h)) return;
+                    rowClone.querySelector(".js-row-matiere-ar-trans").textContent = `${subject.ar} ${subject.trans ? `- ${subject.trans}` : ""}`;
+                    rowClone.querySelector(".js-row-matiere-fr").textContent = subject.fr || "Non Défini";
+                    rowClone.querySelector(".js-row-note").innerHTML = scoreDisplay;
+                    rowClone.querySelector(".js-row-avg").textContent = Utils.formatNum(stat.avg);
+                    rowClone.querySelector(".js-row-min").textContent = Utils.formatNum(stat.min);
+                    rowClone.querySelector(".js-row-max").textContent = Utils.formatNum(stat.max);
 
-        const hKey = h.toUpperCase().trim();
-        const isDiscipline = hKey === "AKHLAQ" || hKey === "HUDUR";
+                    tbody.appendChild(rowClone);
+                });
 
-        const info = CONFIG.subjects[hKey] || { ar: h, trans: h, fr: "" };
-        const valRaw = student[i];
-        const valClean = valRaw?.toLowerCase().includes("abs")
-          ? "ABS"
-          : valRaw
-            ? valRaw.toString().replace(".", ",")
-            : "-";
+                this.container.appendChild(pageClone);
+            });
+        },
 
-        const subjectStat = stats[i] || { bareme: 20, avg: "-", min: "-", max: "-" };
-        const scoreDisplay =
-          valClean === "ABS"
-            ? "ABS"
-            : `${valClean}<small class="bareme-small">/${subjectStat.bareme}</small>`;
+        setStatus(text) {
+            this.status.innerText = text;
+        },
 
-        const rowClone = rowTemplate.content.cloneNode(true);
-        const tr = rowClone.querySelector("tr");
+        enableFallback(path) {
+            this.status.innerHTML = `<span class="error-msg">⚠️ Erreur de chargement pour <b>${path}</b></span>`;
+            document.getElementById("fallback-ui").classList.remove("hidden");
+        },
+    };
 
-        // Add separator class if this is the start of the discipline block
-        if (isDiscipline && !disciplineStarted) {
-          tr.classList.add("row-discipline");
-          disciplineStarted = true;
-        }
+    // --- APPLICATION OVERSEER ---
+    const BulletinsApp = {
+        async init() {
+            const params = Utils.getURLParams();
+            const yearUnderscore = params.year.replace("-", "_");
+            const path = `data/${params.year}/SEMESTRE ${params.sem}/[AMI] NOTES - ${yearUnderscore} - SEMESTRE ${params.sem} - ${params.className}.csv`;
 
-        rowClone.querySelector(".js-row-matiere-ar-trans").textContent =
-          `${info.ar} ${info.trans ? `- ${info.trans}` : ""}`;
-        rowClone.querySelector(".js-row-matiere-fr").textContent = `${info.fr || "Non Défini"}`;
-        rowClone.querySelector(".js-row-note").innerHTML = scoreDisplay;
-        rowClone.querySelector(".js-row-avg").textContent = formatNum(subjectStat.avg);
-        rowClone.querySelector(".js-row-min").textContent = formatNum(subjectStat.min);
-        rowClone.querySelector(".js-row-max").textContent = formatNum(subjectStat.max);
+            UIController.setStatus(`Chargement de ${path}...`);
 
-        tableBody.appendChild(rowClone);
-      });
+            DataService.fetchCSV(
+                path,
+                (rawData) => this.handleData(rawData, params),
+                () => UIController.enableFallback(path),
+            );
 
-      container.appendChild(clone);
-    });
-  }
+            // Manual Upload Listener
+            document.getElementById("manualFile").addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                DataService.parseFile(
+                    file,
+                    (rawData) => this.handleData(rawData, params),
+                    (err) => alert(`Erreur de lecture : ${err}`),
+                );
+            });
+        },
 
-  loadData();
+        handleData(rawData, params) {
+            const processed = GradeEngine.processRaw(rawData);
+            if (!processed) {
+                UIController.setStatus("Format CSV invalide (données insuffisantes).");
+                return;
+            }
+
+            UIController.render(processed, params);
+            UIController.setStatus(`Prêt ! ${processed.students.length} bulletins générés pour la classe ${params.className}.`);
+        },
+    };
+
+    BulletinsApp.init();
 })();
