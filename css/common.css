@@ -1,74 +1,377 @@
 /**
  * Common Styles for AMI Education Projects
- * (Shared Fonts, Colors, Resets, Headesr, Tables)
+ * (Shared Fonts, Colors, Resets, Headers, Tables, Sidebar, Layout)
  */
 
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800&family=Amiri:wght@400;700&display=swap");
 
+/* --- Root Variables & Theming --- */
 :root {
+    /* Brand Colors */
+    --brand: #c8b070;
+    --brand-dark: #6e613d;
+    --brand-light: #f4f1e6;
+
     /* Fonts */
     --font-fr: "Noto Sans", sans-serif;
     --font-ar: "Amiri", serif;
 
-    /* Colors */
-    --brand: #c8b070;
-    --brand-dark: color-mix(in srgb, var(--brand), black 45%); /* #6e613d approx */
-    --brand-light: color-mix(in srgb, var(--brand), white 95%);
-    --color-text: #111827;
+    /* Light Theme Defaults */
+    --bg-app: #f3f4f6;
+    --bg-surface: #ffffff;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --text-tertiary: #9ca3af;
+    --border-color: #e5e7eb;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+
+    /* UI Measurements */
+    --sidebar-width: 260px;
+    --sidebar-width-collapsed: 70px;
+    --header-height: 60px;
+
+    /* Legacy Vars (Backward Compat) */
+    --color-text: var(--text-primary);
     --color-white: #fff;
-    --color-grey: #4b5563;
-    --color-bg-preview: #374151;
-
-    /* Spacing */
-    --spacing-xs: 0.125rem;
-    --spacing-sm: 0.25rem;
-    --spacing-md: 0.5rem;
-    --spacing-lg: 0.75rem;
+    --color-grey: var(--text-secondary);
+    --color-bg-preview: var(--bg-app);
     --spacing-xl: 1rem;
-    --spacing-2xl: 1.25rem;
-
-    /* Borders */
-    --border-thin: 1px solid var(--brand);
-    --border-black: 1px solid #000;
+    --spacing-lg: 0.75rem;
+    --spacing-md: 0.5rem;
 }
 
-/* --- Global Reset --- */
+/* Dark Theme overrides */
+/* Dark Mode Override Class (Controlled by JS) */
+body.dark-mode {
+    --bg-app: #0a0a0a;
+    --bg-surface: #121212;
+    --text-primary: #f4f1e6; /* brand-light */
+    --text-secondary: #d1d5db;
+    --text-tertiary: #9ca3af;
+    --border-color: #27272a;
+    --shadow-color: rgba(0, 0, 0, 0.6);
+    --brand-light: rgba(200, 176, 112, 0.2);
+}
+
+/* Light Mode Override Class */
+body.light-mode {
+    --bg-app: #f3f4f6;
+    --bg-surface: #ffffff;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --text-tertiary: #9ca3af;
+    --border-color: #e5e7eb;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+    --brand-light: #f4f1e6;
+}
+
+/* --- Theme Switcher UI --- */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.theme-switch {
+    display: inline-block;
+    height: 34px;
+    position: relative;
+    width: 60px;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.slider {
+    background-color: #ccc;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: 0.4s;
+    border-radius: 34px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slider:before {
+    background-color: white;
+    bottom: 4px;
+    content: "";
+    height: 26px;
+    left: 4px;
+    position: absolute;
+    transition: 0.4s;
+    width: 26px;
+    border-radius: 50%;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .slider {
+    background-color: var(--brand);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider .icon-sun,
+.slider .icon-moon {
+    font-size: 14px;
+    z-index: 1;
+    user-select: none;
+}
+
+/* --- Global Reset & Body --- */
 * {
     box-sizing: border-box;
 }
 
+/* --- Global Layout --- */
+/* Fix transitions to be smoother */
 body {
-    font-family: var(--font-fr);
+    font-family: var(--font-fr), sans-serif; /* Enforce global font */
+    background-color: var(--bg-app);
+    color: var(--text-primary);
     margin: 0;
-    background-color: var(--color-bg-preview);
-    color: var(--color-text);
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    overflow-x: hidden;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
 }
 
-/* Used for "No Print" UI bars */
-.no-print {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 0.625rem;
-    text-align: center;
+/* Ensure sidebar stays nice */
+.sidebar {
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Active link effect */
+.nav-links li.active a {
+    background-color: var(--brand-light);
+    color: var(--brand);
+    border: 1px solid var(--brand);
+    transform: translateX(5px); /* Small nudge for active state */
+}
+
+/* Hover effect */
+.nav-links a:hover {
+    background-color: var(--bg-app);
+    color: var(--brand);
+    transform: translateX(3px);
+}
+
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar Navigation --- */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--bg-surface);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
     position: fixed;
+    height: 100vh;
+    z-index: 50;
+    transition: width 0.3s ease;
     top: 0;
     left: 0;
+}
+
+.sidebar-header {
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid var(--brand);
+    padding: 4px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+}
+@media (prefers-color-scheme: dark) {
+    .logo-circle {
+        background: rgba(255, 255, 255, 0.9);
+    }
+}
+
+.sidebar-logo {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.brand-title {
+    font-family: var(--font-ar), serif;
+    color: var(--brand);
+    font-size: 1.1rem;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 1.5rem 1rem;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.nav-links li {
+    margin-bottom: 0.5rem;
+}
+
+.nav-links a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.nav-links a:hover {
+    background-color: var(--bg-app);
+    color: var(--brand);
+}
+
+.nav-links li.active a {
+    background-color: var(--brand-light);
+    color: var(--brand);
+    border: 1px solid var(--brand);
+}
+
+.nav-links .icon {
+    margin-right: 12px;
+    font-size: 1.2rem;
+    min-width: 24px;
+    text-align: center;
+}
+
+.sidebar-footer {
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    border-top: 1px solid var(--border-color);
+}
+
+/* --- Main Content Layout --- */
+.main-content {
+    flex-grow: 1;
+    margin-left: var(--sidebar-width);
+    padding: 2rem;
+    transition: margin-left 0.3s ease;
+    width: calc(100% - var(--sidebar-width)); /* Ensure it takes remaining space properly */
+}
+
+/* --- Mobile Nav (Bottom) --- */
+.mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
     right: 0;
-    z-index: 1000;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-color);
+    justify-content: space-around;
+    padding: 0.5rem;
+    z-index: 100;
+    box-shadow: 0 -2px 10px var(--shadow-color);
 }
 
-@media print {
-    .no-print {
-        display: none !important;
+.mobile-nav-item {
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.7rem;
+    padding: 0.5rem;
+}
+
+.mobile-nav-item.active {
+    color: var(--brand);
+}
+.mobile-nav-item .icon {
+    font-size: 1.2rem;
+    margin-bottom: 2px;
+}
+
+/* --- Responsive Layout Logic --- */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: var(--sidebar-width-collapsed);
     }
-    body {
-        background: white;
+    .sidebar-header {
+        padding: 1.5rem 0.5rem;
+    }
+    .brand-title,
+    .sidebar-footer,
+    .nav-links a span:not(.icon) {
+        display: none;
+    }
+    .nav-links a {
+        justify-content: center;
+        padding: 1rem 0;
+    }
+    .nav-links .icon {
+        margin: 0;
+        font-size: 1.4rem;
+    }
+    .main-content {
+        margin-left: var(--sidebar-width-collapsed);
+        width: calc(100% - var(--sidebar-width-collapsed));
     }
 }
 
-/* --- Shared Header Style (Bulletin & Envelope) --- */
+@media (max-width: 640px) {
+    .app-container {
+        flex-direction: column;
+    }
+
+    /* Hide Desktop Sidebar completely on mobile, use Top bar logic if needed, 
+       but for now we hide it to use bottom nav only or a simple top header */
+    .sidebar {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1rem;
+        padding-bottom: 80px; /* Space for bottom nav */
+    }
+
+    .mobile-nav {
+        display: flex;
+    }
+}
+
+/* --- Shared Header Style (Bulletin & Envelope Content) --- */
+/* These are for the PRINTABLE content headers */
 .header {
     display: flex;
     justify-content: center;
@@ -76,38 +379,35 @@ body {
     margin-bottom: var(--spacing-lg);
     gap: var(--spacing-xl);
 }
-
-/* Variant: Bordered Header (Envelope Style originally, now potentially shared) */
 .header.bordered {
     border-top: 1px solid #000;
     border-bottom: 1px solid #000;
     padding: var(--spacing-md) 0;
     margin-bottom: var(--spacing-xl);
 }
-
-/* Variant: Standard Header (Bulletin Style) */
 .header.standard {
     text-align: left;
-    gap: var(--spacing-2xl);
+    gap: var(--spacing-xl);
 }
-
 .header-center {
     flex-grow: 1;
 }
-
 .header-title {
     font-weight: 600;
     font-size: 14px;
     text-transform: uppercase;
-    color: var(--brand-dark);
+    color: var(--brand-dark); /* Ensure using var */
+}
+/* Force darker color for print headers specifically if needed */
+.header-title,
+.header-address {
+    color: #000;
 }
 
 .header-address {
     font-size: 10px;
-    color: var(--color-grey);
     line-height: 1.4;
 }
-
 .logo-box {
     width: 1.4cm;
     height: 1.4cm;
@@ -120,17 +420,16 @@ body {
     max-width: 100%;
 }
 
-/* --- Shared Table Styles (Rounded & Brand Colors) --- */
+/* --- Shared Table Components --- */
 .ami-table {
     width: 100%;
-    border-collapse: separate; /* Required for border-radius */
+    border-collapse: separate;
     border-spacing: 0;
     font-size: 13px;
     border: 1px solid var(--brand);
     border-radius: 8px;
     overflow: hidden;
 }
-
 .ami-table th,
 .ami-table td {
     border-right: 1px solid var(--brand);
@@ -139,8 +438,6 @@ body {
     text-align: center;
     vertical-align: middle;
 }
-
-/* Remove outer borders from cells to avoid double thickness or overflow */
 .ami-table th:last-child,
 .ami-table td:last-child {
     border-right: none;
@@ -148,7 +445,6 @@ body {
 .ami-table tr:last-child td {
     border-bottom: none;
 }
-
 .ami-table th {
     background-color: var(--brand-light);
     font-weight: 600;
@@ -156,24 +452,273 @@ body {
     color: var(--brand-dark);
 }
 
-/* --- Shared Checkbox Style --- */
+/* --- Misc UI --- */
 .checkbox {
     width: 16px;
     height: 16px;
     border: 1px solid var(--brand);
-    border-radius: 4px; /* Slightly rounded */
-    margin-right: 0.3125rem;
+    border-radius: 4px;
+    margin-right: 5px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     font-weight: 600;
     color: var(--brand-dark);
-    /* Improve alignment */
     vertical-align: middle;
 }
-
 .appr-checkbox-row {
     display: flex;
     align-items: center;
-    margin-bottom: 0.3125rem;
+    margin-bottom: 5px;
+}
+
+/* --- Config Dashboard & Forms --- */
+.controls {
+    /* Inherits basic no-print positioning */
+    border-bottom: 2px solid var(--brand-light);
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.manual-dashboard {
+    background: var(--bg-surface);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.status-bar {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.dashboard-header {
+    border-left: 3px solid var(--brand);
+    padding-left: 10px;
+    margin-bottom: 10px;
+}
+.dashboard-title {
+    font-weight: 900;
+    color: var(--brand-dark);
+    margin: 0;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+/* Form Styles */
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+.form-group-row-mini {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 0.625rem;
+    align-items: end;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+.form-group label {
+    font-size: 9px;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--brand-dark);
+    margin-bottom: 4px;
+}
+.form-group input,
+.form-group select {
+    padding: 0.5rem;
+    border: 1.5px solid var(--brand-light);
+    border-radius: 8px;
+    background: var(--bg-surface);
+    color: var(--text-primary);
+}
+
+/* Visual Picker */
+.visual-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+    gap: 6px;
+}
+
+/* Semi-Picker Row (Requested: Side by Side) */
+.visual-picker-row {
+    display: flex;
+    gap: 10px;
+}
+.visual-picker-row .picker-item {
+    flex: 1;
+}
+
+/* Picker Items */
+.picker-item {
+    position: relative;
+}
+.picker-item input[type="radio"],
+.picker-item input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.picker-item label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.5rem;
+    background: var(--bg-app); /* Slightly diff from surface */
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    transition: all 0.2s;
+    user-select: none;
+    color: var(--text-secondary);
+}
+.picker-item label:hover {
+    background: var(--brand-light);
+    border-color: var(--brand);
+}
+.picker-item input:checked + label {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand-dark);
+}
+
+/* Specific Checkbox Style inside Picker (for multi-select) */
+.picker-item input[type="checkbox"] + label:before {
+    /* Optional: Add checkmark icon or box if desired, but color change is enough */
+}
+
+/* Upload Section */
+.upload-section {
+    border: 2px dashed var(--brand);
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.2s;
+}
+.upload-section:hover,
+.upload-section.dragover {
+    background: var(--brand-light);
+}
+.upload-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+.upload-text {
+    font-weight: 700;
+    color: var(--brand-dark);
+    margin: 0;
+}
+.upload-hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+.file-input {
+    display: none;
+}
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--brand-light);
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+.remove-file {
+    background: none;
+    border: none;
+    color: var(--brand-dark);
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+/* Hidden Utility */
+.hidden {
+    display: none !important;
+}
+
+/* --- Top Bar (Page Titles) --- */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+.page-title {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin: 0;
+}
+.admin-badge {
+    background: var(--brand);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* --- PRINT STYLES --- */
+@media print {
+    .sidebar,
+    .mobile-nav,
+    .no-print,
+    .top-bar {
+        display: none !important;
+    }
+
+    .app-container {
+        display: block;
+    }
+
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    body {
+        background-color: white;
+        color: black;
+    }
+
+    /* Ensure tables print correctly */
+    .ami-table {
+        border: 1px solid #000;
+    }
+    .ami-table th {
+        background-color: #eee !important;
+        color: #000 !important;
+        -webkit-print-color-adjust: exact;
+    }
 }

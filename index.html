@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Tableau de Bord - AMI Education</title>
+
+        <!-- Dependencies -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+
+        <!-- Styles -->
+        <link rel="stylesheet" href="css/common.css" />
+        <link rel="stylesheet" href="css/dashboard.css" />
+    </head>
+    <body>
+        <div class="app-container">
+            <!-- Sidebar Navigation (Loaded by common.js) -->
+            <div id="sidebar-container"></div>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <header class="top-bar">
+                    <h1 class="page-title">Vue d'ensemble</h1>
+                    <div class="user-profile">
+                        <span class="admin-badge">Admin</span>
+                    </div>
+                </header>
+
+                <!-- KPI Cards Grid -->
+                <section class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon total-students">🎓</div>
+                        <div class="kpi-info">
+                            <h3>Total Élèves</h3>
+                            <p class="kpi-value" id="kpi-total">-</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon classes-count">🏫</div>
+                        <div class="kpi-info">
+                            <h3>Classes</h3>
+                            <p class="kpi-value" id="kpi-classes">-</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon gender-ratio">⚖️</div>
+                        <div class="kpi-info">
+                            <h3>Filles / Garçons</h3>
+                            <p class="kpi-value warning" id="kpi-ratio">-</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon adherents">🤝</div>
+                        <div class="kpi-info">
+                            <h3>Adhérents</h3>
+                            <p class="kpi-value success" id="kpi-adherents">-</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Charts Section -->
+                <section class="charts-grid">
+                    <div class="chart-container wide">
+                        <div class="chart-header">
+                            <h2>Répartition par Classe</h2>
+                        </div>
+                        <div class="canvas-wrapper">
+                            <canvas id="classesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container narrow">
+                        <div class="chart-header">
+                            <h2>Répartition Genre</h2>
+                        </div>
+                        <div class="canvas-wrapper doughnut-wrapper">
+                            <canvas id="genderChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+        <!-- Mobile nav handled by sidebar.html injection via container -->
+
+        <!-- Application Script -->
+        <script src="js/common.js"></script>
+        <script src="js/dashboard.js"></script>
+    </body>
+</html>

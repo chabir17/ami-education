@@ -1,18 +1,18 @@
 /**
  * Envelope Styling (C6 Landscape)
  */
-@import url("common.css");
+/* Remove import common.css */
 
 /* C6 format: 162mm x 114mm */
 .envelope-page {
     width: 162mm;
     height: 114mm;
     background: white;
-    margin: 2.36rem;
-    padding: 1.89rem 2.84rem; /* Slightly adjusted padding for logo fit */
+    margin: 2rem auto; /* Center it */
+    padding: 1.89rem 2.84rem;
     box-sizing: border-box;
     position: relative;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -22,7 +22,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 50px;
+    padding-top: 20px;
+    width: 100%;
 }
 
 @media print {

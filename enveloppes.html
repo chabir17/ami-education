@@ -5,17 +5,48 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Impression Enveloppes - AMI</title>
         <!-- PapaParse CDN -->
+        <!-- PapaParse CDN -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+        <link rel="stylesheet" href="css/common.css" />
         <link rel="stylesheet" href="css/envelope.css" />
         <script src="js/common.js"></script>
     </head>
     <body>
-        <div class="controls no-print">
-            <span id="status">Chargement...</span> |
-            <button onclick="window.print()" style="padding: 5px 10px; cursor: pointer">Imprimer</button>
-        </div>
+        <div class="app-container">
+            <div id="sidebar-container" class="no-print"></div>
 
-        <div id="container"></div>
+            <main class="main-content">
+                <div class="controls no-print">
+                    <header class="top-bar">
+                        <h1 class="page-title">Enveloppes</h1>
+                    </header>
+
+                    <!-- Config Dashboard injected here -->
+                    <div id="config-container"></div>
+
+                    <div style="text-align: right; margin-bottom: 20px">
+                        <span id="status" class="status-bar">Chargement...</span>
+                        <button
+                            onclick="window.print()"
+                            style="
+                                padding: 10px 20px;
+                                cursor: pointer;
+                                background: var(--brand);
+                                color: white;
+                                border: none;
+                                border-radius: 4px;
+                                font-weight: bold;
+                                margin-left: 10px;
+                            "
+                        >
+                            Imprimer
+                        </button>
+                    </div>
+                </div>
+
+                <div id="container"></div>
+            </main>
+        </div>
 
         <template id="envelope-template">
             <div class="envelope-page">

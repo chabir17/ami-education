@@ -14,71 +14,84 @@
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
 
         <!-- Application Files -->
+        <!-- Application Files -->
+        <link rel="stylesheet" href="css/common.css" />
         <link rel="stylesheet" href="css/bulletin.css" />
         <script src="js/common.js"></script>
         <script src="js/config.js" defer></script>
         <script src="js/bulletin.js" defer></script>
     </head>
     <body>
-        <!-- Top UI (Hidden on Print) -->
-        <div class="controls no-print">
-            <div id="status" class="status-bar">Prêt pour la génération</div>
+        <div class="app-container">
+            <!-- Sidebar (Loaded by JS) -->
+            <div id="sidebar-container" class="no-print"></div>
 
-            <div id="manual-ui" class="manual-dashboard">
-                <div class="dashboard-header compact">
-                    <h2 class="dashboard-title">Génération de Bulletin</h2>
-                </div>
+            <main class="main-content">
+                <!-- Top UI (Hidden on Print) -->
+                <div class="controls no-print">
+                    <header class="top-bar">
+                        <h1 class="page-title">Bulletins</h1>
+                    </header>
 
-                <div class="dashboard-grid compact-grid">
-                    <div class="form-section">
-                        <div class="form-group-row-mini">
-                            <div class="form-group">
-                                <label>Année Scolaire</label>
-                                <select id="input-year">
-                                    <option value="2025-2026" selected>2025/2026</option>
-                                    <option value="2026-2027">2026/2027</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Semestre</label>
-                                <div class="visual-picker-row" id="sem-picker">
-                                    <div class="picker-item">
-                                        <input type="radio" name="sem" id="sem1" value="1" checked />
-                                        <label for="sem1">1<sup>er</sup>&nbsp;Semestre</label>
+                    <div id="status" class="status-bar">Prêt pour la génération</div>
+
+                    <div id="manual-ui" class="manual-dashboard">
+                        <div class="dashboard-header compact">
+                            <h2 class="dashboard-title">Génération de Bulletin</h2>
+                        </div>
+
+                        <div class="dashboard-grid compact-grid">
+                            <div class="form-section">
+                                <div class="form-group-row-mini">
+                                    <div class="form-group">
+                                        <label>Année Scolaire</label>
+                                        <select id="input-year">
+                                            <option value="2025-2026" selected>2025/2026</option>
+                                            <option value="2026-2027">2026/2027</option>
+                                        </select>
                                     </div>
-                                    <div class="picker-item">
-                                        <input type="radio" name="sem" id="sem2" value="2" />
-                                        <label for="sem2">2<sup>nd</sup>&nbsp;Semestre</label>
+                                    <div class="form-group">
+                                        <label>Semestre</label>
+                                        <div class="visual-picker-row" id="sem-picker">
+                                            <div class="picker-item">
+                                                <input type="radio" name="sem" id="sem1" value="1" checked />
+                                                <label for="sem1">1<sup>er</sup>&nbsp;Semestre</label>
+                                            </div>
+                                            <div class="picker-item">
+                                                <input type="radio" name="sem" id="sem2" value="2" />
+                                                <label for="sem2">2<sup>nd</sup>&nbsp;Semestre</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Classe</label>
+                                    <div class="visual-picker-grid" id="class-picker">
+                                        <!-- Dynamically populated by script.js -->
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Classe</label>
-                            <div class="visual-picker-grid" id="class-picker">
-                                <!-- Dynamically populated by script.js -->
+
+                            <div class="upload-section" id="dropzone">
+                                <div class="dropzone-content">
+                                    <div class="upload-icon">📄</div>
+                                    <p class="upload-text">Glissez votre fichier <b>CSV</b> ici</p>
+                                    <p class="upload-hint">ou cliquez pour parcourir vos fichiers</p>
+                                    <input type="file" id="manualFile" accept=".csv" class="file-input" />
+                                </div>
+                                <div id="file-info" class="file-info hidden">
+                                    <span class="file-name">nom_du_fichier.csv</span>
+                                    <button class="remove-file" id="reset-file">×</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="upload-section" id="dropzone">
-                        <div class="dropzone-content">
-                            <div class="upload-icon">📄</div>
-                            <p class="upload-text">Glissez votre fichier <b>CSV</b> ici</p>
-                            <p class="upload-hint">ou cliquez pour parcourir vos fichiers</p>
-                            <input type="file" id="manualFile" accept=".csv" class="file-input" />
-                        </div>
-                        <div id="file-info" class="file-info hidden">
-                            <span class="file-name">nom_du_fichier.csv</span>
-                            <button class="remove-file" id="reset-file">×</button>
-                        </div>
-                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Generated Pages Container -->
-        <div id="container"></div>
+                <!-- Generated Pages Container -->
+                <div id="container"></div>
+            </main>
+        </div>
 
         <!-- Bulletin Page Template -->
         <template id="bulletin-template">

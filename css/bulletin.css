@@ -1,7 +1,7 @@
 /**
  * Bulletin Styling (A4 Portrait)
  */
-@import url("common.css");
+/* Remove import common.css as it is linked in HTML */
 
 :root {
     --page-width: 210mm;
@@ -9,119 +9,8 @@
 }
 
 /* --- UI Controls Override --- */
-/* The .no-print in common.css is generic. Bulletin has a more complex control panel. */
-.controls {
-    /* Inherits basic no-print positioning */
-    border-bottom: 2px solid var(--brand-light);
-}
-
-.manual-dashboard {
-    background: white;
-    padding: var(--spacing-md) var(--spacing-xl);
-    border-radius: 8px;
-    border: 1px solid var(--brand-light);
-    width: 100%;
-    margin-top: 40px; /* Space from top */
-}
-
-/* ... (Keep the rest of the dashboard/form styles from style.css) ... */
-.status-bar {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--color-grey);
-}
-.dashboard-header {
-    border-left: 3px solid var(--brand);
-    padding-left: 10px;
-    margin-bottom: 10px;
-}
-.dashboard-title {
-    font-weight: 900;
-    color: var(--brand-dark);
-    margin: 0;
-    text-transform: uppercase;
-}
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-}
-.form-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
-}
-.form-group-row-mini {
-    display: grid;
-    grid-template-columns: 0.8fr 1.2fr;
-    gap: 0.625rem;
-    align-items: end;
-}
-.form-group {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-}
-.form-group label {
-    font-size: 9px;
-    text-transform: uppercase;
-    font-weight: 800;
-    color: var(--brand-dark);
-}
-.form-group input,
-.form-group select {
-    padding: 0.5rem;
-    border: 1.5px solid var(--brand-light);
-    border-radius: 8px;
-}
-.visual-picker-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
-    gap: 6px;
-}
-/* Replace radio buttons with button-like labels */
-.picker-item {
-    position: relative;
-}
-
-.picker-item input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.picker-item label {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    background: var(--brand-light);
-    border: 1px solid var(--brand);
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    width: 100%;
-    transition: all 0.2s;
-    user-select: none;
-}
-
-.picker-item label:hover {
-    background: #e5e7eb;
-}
-
-.picker-item input:checked + label {
-    background: var(--brand);
-    color: white;
-    border-color: var(--brand-dark);
-}
-.upload-section {
-    border: 2px dashed var(--brand);
-    padding: 0.625rem;
-    text-align: center;
-    cursor: pointer;
-}
+/* Styles moved to common.css for shared dashboard */
+/* Kept empty or specific Bulletin overrides here if needed */
 
 /* --- A4 Page Layout --- */
 .page {
@@ -222,7 +111,7 @@
 .matiere-combined {
     font-weight: 600;
     color: var(--brand-dark);
-    font-family: var(--font-ar), var(--font-fr);
+    font-family: var(--font-ar), var(--font-fr), serif; /* Prioritize shared fonts */
 }
 .matiere-sub {
     font-size: 10px;

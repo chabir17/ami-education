@@ -3,21 +3,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const CONTAINER_EL = document.getElementById("container");
     const CSV_PATH = "data/2025-2026/Database/ÉLÈVES.csv";
 
+    // Globals for cached data
+    let currentData = [];
+    let currentClass = "all";
+
     async function init() {
         console.log("Initializing Envelope Generator...");
-        const params = App.getURLParams();
-        const classFilter = params.class || null;
 
-        // Ensure header is loaded
+        // Load Header if needed
         if (typeof App.getHeader === "function" && !App.getHeader()) {
             await App.preloadHeader();
         }
 
-        if (typeof Papa === "undefined") {
-            STATUS_EL.textContent = "Erreur : PapaParse non chargé.";
-            return;
+        // Initialize Config UI
+        if (App.SelectionManager) {
+            await App.SelectionManager.loadConfig("config-container", {
+                hideSem: true,
+                onFileLoad: (file) => handleFileLoad(file),
+                onConfigChange: () => handleConfigChange(),
+            });
         }
 
+        // Auto-load default CSV
+        loadDefaultCSV();
+    }
+
+    function loadDefaultCSV() {
+        if (typeof Papa === "undefined") return;
+
+        STATUS_EL.textContent = "Chargement des données...";
         Papa.parse(CSV_PATH, {
             download: true,
             header: true,
@@ -25,11 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
             complete: (results) => {
                 if (results.errors.length) {
                     console.error("Errors:", results.errors);
-                    STATUS_EL.textContent = "Erreur lors de la lecture du CSV (voir console).";
+                    STATUS_EL.textContent = "Erreur CSV.";
                     return;
                 }
-                console.log("CSV Loaded:", results.data.length, "rows");
-                generateEnvelopes(results.data, classFilter);
+                processData(results.data);
             },
             error: (err) => {
                 console.error("Fetch error:", err);
@@ -38,23 +51,81 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function generateEnvelopes(data, classFilter) {
-        const template = document.getElementById("envelope-template");
-        if (!template) {
-            console.error("Template not found");
-            return;
+    function handleFileLoad(file) {
+        STATUS_EL.textContent = "Lecture du fichier...";
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: (results) => processData(results.data),
+            error: (err) => (STATUS_EL.textContent = "Erreur lecture fichier."),
+        });
+    }
+
+    function processData(data) {
+        currentData = data.filter((s) => s.Nom); // Basic validation
+
+        // Extract Unique Classes
+        const classes = [...new Set(currentData.map((s) => s.Classe).filter((c) => c))].sort();
+
+        // Populate Picker (MultiSelect: true)
+        if (App.SelectionManager) {
+            // Set initial to ALL classes array or "all" string handling.
+            // Let's default to filtering ALL selected.
+            currentClass = classes; // Default to all selected array
+
+            App.SelectionManager.populateClassPicker(
+                classes,
+                (selected) => {
+                    // Update current selection (array of strings)
+                    currentClass = selected;
+                    render();
+                },
+                currentClass,
+                true, // Enable Multi-select
+            );
         }
+
+        STATUS_EL.textContent = `${currentData.length} élèves chargés.`;
+        render();
+    }
+
+    function handleConfigChange() {
+        // Year change could trigger reload, but for now we just re-render if needed
+        // Since we don't have year-based paths for envelopes dynamic loading yet,
+        // we mainly rely on the loaded data.
+        render();
+    }
+
+    function render() {
+        if (!currentData.length) return;
+
+        // Filter: check if class is in selected array
+        let filtered = currentData;
+
+        // If currentClass is array
+        if (Array.isArray(currentClass)) {
+            if (currentClass.length === 0) {
+                filtered = []; // Nothing selected
+            } else {
+                filtered = currentData.filter((student) => currentClass.includes(student.Classe));
+            }
+        } else if (currentClass !== "all") {
+            // Fallback for single select string if somehow set (e.g. legacy)
+            filtered = currentData.filter((s) => s.Classe === currentClass);
+        }
+
+        generateEnvelopes(filtered);
+    }
+
+    function generateEnvelopes(data) {
+        const template = document.getElementById("envelope-template");
+        if (!template) return;
 
         CONTAINER_EL.innerHTML = "";
 
-        // 1. Filter
-        let filteredData = data.filter((s) => s.Nom); // Basic validity check
-        if (classFilter) {
-            filteredData = filteredData.filter((s) => s.Classe === classFilter);
-        }
-
-        // 2. Sort (Classe -> Nom -> Prénom)
-        filteredData.sort((a, b) => {
+        // Sort (Classe -> Nom -> Prénom)
+        data.sort((a, b) => {
+            // ... (Same sort logic)
             const classA = (a.Classe || "").toUpperCase();
             const classB = (b.Classe || "").toUpperCase();
             if (classA < classB) return -1;
@@ -65,35 +136,21 @@ document.addEventListener("DOMContentLoaded", () => {
             if (nomA < nomB) return -1;
             if (nomA > nomB) return 1;
 
-            const prenomA = (a["Prénom"] || "").toUpperCase();
-            const prenomB = (b["Prénom"] || "").toUpperCase();
-            if (prenomA < prenomB) return -1;
-            if (prenomA > prenomB) return 1;
-
             return 0;
         });
 
-        let count = 0;
-        filteredData.forEach((student) => {
-            // Check required fields (Nom usually present)
-            if (!student.Nom) return;
-
+        data.forEach((student) => {
             const clone = template.content.cloneNode(true);
 
-            // Inject Header using common.js
+            // Inject Header
             const headerContainer = clone.getElementById("header-container");
             if (headerContainer && typeof App.getHeader === "function") {
                 headerContainer.innerHTML = App.getHeader();
             }
 
-            // Fill details
-            // "Nom" and "Prénom" match the CSV headers seen in file view
-            // Some names might be undefined, handle gracefully
             const nom = student.Nom || "";
             const prenom = student["Prénom"] || "";
             const classe = student.Classe || "";
-            // Check Adhérent status (Column "Adhérent AMI ?")
-            // Can be TRUE/FALSE or OUI/NON depending on CSV export
             const adherentVal = student["Adhérent AMI ?"] || "";
             const isAdherent = adherentVal.toUpperCase() === "TRUE" || adherentVal.toUpperCase() === "OUI" || adherentVal.toUpperCase() === "VRAI";
 
@@ -101,7 +158,6 @@ document.addEventListener("DOMContentLoaded", () => {
             clone.querySelector(".js-prenom").textContent = prenom;
             clone.querySelector(".js-classe").textContent = classe;
 
-            // Check A if Adherent, B otherwise
             if (isAdherent) {
                 clone.querySelector(".js-cat-a").textContent = "✓";
             } else {
@@ -109,10 +165,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             CONTAINER_EL.appendChild(clone);
-            count++;
         });
 
-        STATUS_EL.textContent = `${count} enveloppes générées. Prêt à imprimer.`;
+        STATUS_EL.textContent = `${data.length} enveloppes générées.`;
     }
 
     init();
