@@ -24,107 +24,135 @@
             <div id="sidebar-container"></div>
 
             <!-- Main Content -->
+            <!-- Main Content -->
             <main class="main-content">
                 <header class="top-bar">
                     <h1 class="page-title">Vue d'ensemble</h1>
-                    <!-- NEW DASHBOARD LAYOUT (Inspired by Manoracheta) -->
-                    <div class="dashboard-layout">
-                        <!-- Top Row: HERO + STATS LIST + DOUGHNUT -->
+                </header>
+
+                <!-- NEW DASHBOARD LAYOUT (Inspired by Manoracheta) -->
+                <div class="dashboard-layout">
+                        <!-- Top Row: HERO + STATS LIST (1/2 - 1/2) -->
                         <div class="dashboard-top-row">
                             <!-- 1. HERO CARD (Welcome + Totals) -->
-                            <div class="hero-card">
-                                <div class="hero-text">
-                                    <h1>Bonjour, Équipe AMI 👋</h1>
-                                    <p>Voici le résumé de l'année scolaire en cours.</p>
-                                    <div class="hero-big-stats">
-                                        <div class="hbs-item">
-                                            <span class="hbs-val" id="kpi-total">-</span>
-                                            <span class="hbs-lbl">Élèves</span>
-                                        </div>
-                                        <div class="hbs-sep"></div>
-                                        <div class="hbs-item">
-                                            <span class="hbs-val" id="kpi-classes">-</span>
-                                            <span class="hbs-lbl">Classes</span>
+                            <!-- No external title for greeting card -->
+                            <div class="dashboard-col col-hero">
+                                <div class="hero-card">
+                                    <div class="hero-text">
+                                        <h1>Bonjour, Équipe AMI 👋</h1>
+                                        <p>Voici le résumé de l'année scolaire en cours.</p>
+                                        <div class="hero-big-stats">
+                                            <div class="hbs-item">
+                                                <span class="hbs-val" id="kpi-total">-</span>
+                                                <span class="hbs-lbl">Élèves</span>
+                                            </div>
+                                            <div class="hbs-sep"></div>
+                                            <div class="hbs-item">
+                                                <span class="hbs-val" id="kpi-classes">-</span>
+                                                <span class="hbs-lbl">Classes</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="hero-decoration">
-                                    <span class="deco-emoji">🎓</span>
+                                    <div class="hero-decoration">
+                                        <span class="deco-emoji">🎓</span>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- 2. QUICK STATS LIST -->
-                            <div class="stats-list-card">
-                                <h3>Vues Rapides</h3>
-                                <div class="sl-item">
-                                    <div class="sl-icon blue-bg">👦</div>
-                                    <div class="sl-meta">
-                                        <span class="sl-lbl">Garçons</span>
-                                        <span class="sl-val" id="val-boys">-</span>
+                            <div class="dashboard-col">
+                                <div class="stats-list-card two-col-stats">
+                                    <!-- Col 1: Gender -->
+                                    <div class="stats-col">
+                                        <div class="sl-item">
+                                            <div class="sl-icon blue-bg">👦</div>
+                                            <div class="sl-meta">
+                                                <span class="sl-lbl">Garçons</span>
+                                                <span class="sl-val" id="val-boys">-</span>
+                                            </div>
+                                        </div>
+                                        <div class="sl-item">
+                                            <div class="sl-icon pink-bg">👧</div>
+                                            <div class="sl-meta">
+                                                <span class="sl-lbl">Filles</span>
+                                                <span class="sl-val" id="val-girls">-</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="sl-item">
-                                    <div class="sl-icon pink-bg">👧</div>
-                                    <div class="sl-meta">
-                                        <span class="sl-lbl">Filles</span>
-                                        <span class="sl-val" id="val-girls">-</span>
-                                    </div>
-                                </div>
-                                <div class="sl-item">
-                                    <div class="sl-icon green-bg">✅</div>
-                                    <div class="sl-meta">
-                                        <span class="sl-lbl">Adhérents</span>
-                                        <span class="sl-val" id="val-adh">-</span>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- 3. GENDER DOUGHNUT -->
-                            <div class="mini-chart-card">
-                                <h3>Parité</h3>
-                                <div class="chart-wrapper-mini">
-                                    <canvas id="genderChart"></canvas>
+                                    <!-- Col 2: Adherents -->
+                                    <div class="stats-col">
+                                        <div class="sl-item">
+                                            <div class="sl-icon green-bg">✅</div>
+                                            <div class="sl-meta">
+                                                <span class="sl-lbl">Adhérents</span>
+                                                <span class="sl-val" id="val-adh">-</span>
+                                            </div>
+                                        </div>
+                                        <div class="sl-item">
+                                            <div class="sl-icon orange-bg">❌</div>
+                                            <div class="sl-meta">
+                                                <span class="sl-lbl">Non Adh.</span>
+                                                <span class="sl-val" id="val-non-adh">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Bottom Row: MAIN CHART + TABLE -->
-                        <div class="dashboard-bottom-row">
+                        <!-- Middle Row: CHARTS (2/3 - 1/3) -->
+                        <div class="dashboard-middle-row">
                             <!-- Classes Bar Chart -->
-                            <div class="main-chart-card">
-                                <div class="card-header">
-                                    <h2>Répartition par Classe</h2>
-                                </div>
-                                <div class="chart-wrapper-main">
-                                    <canvas id="classesChart"></canvas>
+                            <div class="dashboard-col">
+                                <h2 class="section-title">Répartition par Classe</h2>
+                                <div class="main-chart-card">
+                                    <div class="chart-wrapper-main">
+                                        <canvas id="classesChart"></canvas>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Class Table -->
-                            <div class="table-card">
-                                <div class="card-header">
-                                    <h2>Détails</h2>
+                            <!-- GENDER DOUGHNUT -->
+                            <div class="dashboard-col">
+                                <h3 class="section-title">Parité</h3>
+                                <div class="mini-chart-card">
+                                    <div class="chart-wrapper-mini">
+                                        <canvas id="genderChart"></canvas>
+                                    </div>
                                 </div>
-                                <div class="table-responsive">
-                                    <table id="class-details-table" class="ami-table modern-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Classe</th>
-                                                <th>Prof.</th>
-                                                <th>Eff.</th>
-                                                <th>Adh.</th>
-                                                <th>G / F</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- JS Injected -->
-                                        </tbody>
-                                    </table>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Row: TABLE (Full Width) -->
+                        <div class="dashboard-bottom-row">
+                            <!-- Class Table -->
+                            <div class="dashboard-col">
+                                <h2 class="section-title">Détails</h2>
+                                <div class="table-card">
+                                    <div class="table-responsive">
+                                        <table id="class-details-table" class="ami-table modern-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Classe</th>
+                                                    <th>Prof.</th>
+                                                    <th>Eff.</th>
+                                                    <th>Adh.</th>
+                                                    <th>G / F</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- JS Injected -->
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </header>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
         <!-- Mobile nav handled by sidebar.html injection via container -->

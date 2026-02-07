@@ -179,7 +179,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         // 2. Quick Stats List
         setVal("val-boys", kpis.boys);
         setVal("val-girls", kpis.girls);
-        setVal("val-adh", `<span style="color:${COLORS.green}">${kpis.adherents}</span> <small style="color:${COLORS.text}; opacity:0.6;">/ ${kpis.total}</small>`);
+        setVal("val-adh", kpis.adherents);
+        setVal("val-non-adh", kpis.nonAdherents);
     }
 
     function renderClassTable() {

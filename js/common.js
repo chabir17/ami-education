@@ -68,8 +68,36 @@ const App = {
             }
         });
 
-        // Initialize Theme Switch (must run after sidebar is injected)
+        // Initialize Theme Switch
         this.initThemeSwitch();
+
+        // Initialize Sidebar Toggle
+        this.initSidebarToggle();
+    },
+
+    initSidebarToggle() {
+        // Wait for sidebar to be injected if needed, but here it's called after injection
+        const toggleBtn = document.getElementById("sidebar-toggle");
+        if (!toggleBtn) return;
+
+        const sidebar = document.querySelector(".sidebar");
+        const body = document.body;
+
+        // Load saved state
+        const isCollapsed = localStorage.getItem("sidebarCollapsed") === "true";
+        if (isCollapsed) {
+            sidebar.classList.add("collapsed");
+            body.classList.add("sidebar-collapsed");
+        }
+
+        toggleBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("collapsed");
+            body.classList.toggle("sidebar-collapsed");
+
+            // Save state
+            const collapsed = sidebar.classList.contains("collapsed");
+            localStorage.setItem("sidebarCollapsed", collapsed);
+        });
     },
 
     initThemeSwitch() {

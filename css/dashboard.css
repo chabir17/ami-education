@@ -14,14 +14,21 @@
 
 .dashboard-top-row {
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr; /* Hero is wider */
+    grid-template-columns: 1fr 1fr; /* 1/2 - 1/2 */
+    gap: 1.5rem;
+    align-items: stretch;
+}
+
+.dashboard-middle-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 2/3 - 1/3 */
     gap: 1.5rem;
     align-items: stretch;
 }
 
 .dashboard-bottom-row {
     display: grid;
-    grid-template-columns: 2fr 1.2fr;
+    grid-template-columns: 1fr; /* Full Width */
     gap: 1.5rem;
     align-items: start;
 }
@@ -116,47 +123,120 @@ body.dark-mode .hero-big-stats {
     opacity: 0.8;
 }
 
-/* 2. STATS LIST CARD */
-.stats-list-card h3,
-.mini-chart-card h3,
-.card-header h2 {
-    font-size: 1rem;
-    color: var(--text-primary);
-    margin: 0 0 1.25rem 0;
-    font-family: var(--font-heading);
-    font-weight: 600;
+/* --- Layout Columns & Titles --- */
+.dashboard-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Gap between title and card */
+    height: 100%;
 }
+
+.section-title {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 700;
+    margin: 0 0 0 0;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title::before {
+    content: "";
+    display: block;
+    width: 4px;
+    height: 16px;
+    background: var(--brand);
+    border-radius: 2px;
+}
+
+/* 2. STATS LIST CARD (AMI Gold/Luxury Theme) */
+.two-col-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    height: 100%; /* Fill column */
+}
+
+/* Specific Gold/Orange Theming for this card (Matching Hero Tonality) */
+.stats-list-card {
+    /* Vibrant Soft Orange Gradient (Light Mode) */
+    background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+    border: 1px solid rgba(251, 146, 60, 0.2);
+    color: #7c2d12; /* Deep Orange Text */
+}
+
+body.dark-mode .stats-list-card {
+    /* Rich Deep Orange/Amber (Dark Mode) - Matching Hero intensity */
+    background: linear-gradient(135deg, #7c2d12 0%, #ea580c 100%);
+    border: 1px solid rgba(251, 146, 60, 0.1);
+    color: #fff7ed; /* Light Orange Text */
+}
+
+.stats-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Space between items vertical */
+    justify-content: center;
+}
+
+/* Make icons pop on the colored background */
+.stats-list-card .sl-icon {
+    background: rgba(255, 255, 255, 0.5); /* Clearer white backing */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(4px);
+}
+body.dark-mode .stats-list-card .sl-icon {
+    background: rgba(0, 0, 0, 0.2); /* Darker backing for dark mode contrast */
+}
+
+/* Restore specific colors for icons irrespective of bg */
+.stats-list-card .blue-bg {
+    color: #2563eb;
+} /* Stronger Blue */
+.stats-list-card .pink-bg {
+    color: #db2777;
+} /* Stronger Pink */
+.stats-list-card .green-bg {
+    color: #16a34a;
+} /* Stronger Green */
+.stats-list-card .orange-bg {
+    color: #ea580c;
+} /* Stronger Orange */
 
 .sl-item {
     display: flex;
     align-items: center;
-    margin-bottom: 1rem;
-}
-.sl-item:last-child {
-    margin-bottom: 0;
+    /* margin-bottom removal since we use gap now */
+    margin: 0;
 }
 
 .sl-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
+    width: 48px; /* Slightly bigger icons */
+    height: 48px;
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     margin-right: 1rem;
+    flex-shrink: 0;
 }
-.blue-bg {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
+
+.orange-bg {
+    background: rgba(249, 115, 22, 0.1);
+    color: #fb923c;
 }
-.pink-bg {
-    background: rgba(236, 72, 153, 0.1);
-    color: #ec4899;
-}
-.green-bg {
-    background: rgba(34, 197, 94, 0.1);
-    color: #22c55e;
+
+/* Ensure cards fill height */
+.hero-card,
+.stats-list-card,
+.main-chart-card,
+.mini-chart-card {
+    height: 100%;
 }
 
 .sl-meta {
@@ -175,7 +255,7 @@ body.dark-mode .hero-big-stats {
 
 /* 3. MINI CHART CARD */
 .chart-wrapper-mini {
-    height: 140px;
+    height: 300px; /* Match height of main chart wrapper for alignment */
     position: relative;
     display: flex;
     justify-content: center;
@@ -192,29 +272,79 @@ body.dark-mode .hero-big-stats {
 }
 
 /* RESPONSIVE */
+/* RESPONSIVE */
 @media (max-width: 1100px) {
-    .dashboard-top-row {
-        grid-template-columns: 1fr 1fr; /* Hero takes full, others split */
-    }
-    .hero-card {
-        grid-column: span 2;
+    /* Tablet Landscape */
+    .dashboard-top-row,
+    .dashboard-middle-row {
+        grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 900px) {
-    .dashboard-top-row {
-        grid-template-columns: 1fr;
-    }
-    .hero-card {
-        grid-column: span 1;
-    }
-
+    .dashboard-top-row,
+    .dashboard-middle-row,
     .dashboard-bottom-row {
         grid-template-columns: 1fr;
     }
+
     .hero-big-stats {
         flex-wrap: wrap;
     }
+}
+
+/* --- DataBerry Inspired Table --- */
+.modern-table {
+    background: transparent;
+    border-collapse: separate;
+    border-spacing: 0 12px; /* Row spacing */
+    width: 100%;
+}
+
+.modern-table thead th {
+    background: transparent;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border: none;
+    padding: 0 1rem;
+}
+
+.modern-table tbody tr {
+    background: var(--bg-app); /* Card-like rows */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    border-radius: 12px;
+    transition: transform 0.2s;
+}
+
+.modern-table tbody tr:hover {
+    transform: scale(1.01);
+    background: var(--brand-light);
+}
+
+.modern-table td {
+    padding: 1rem;
+    border: none;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.modern-table td:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.modern-table td:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* Dark mode specific for table */
+body.dark-mode .modern-table tbody tr {
+    background: rgba(255, 255, 255, 0.06); /* Slightly Lighter for better contrast on black bg */
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* --- Class Badge Styles --- */

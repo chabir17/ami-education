@@ -26,17 +26,25 @@
     --shadow-color: rgba(0, 0, 0, 0.05);
 
     /* UI Measurements */
-    --sidebar-width: 260px;
-    --sidebar-width-collapsed: 80px;
-    --header-height: 70px;
+    --sidebar-width: 280px;
+    --sidebar-width-collapsed: 90px;
+    --header-height: 80px;
 
-    /* Modern UI Vars (Manoracheta Inspired) */
+    /* "DataBerry" Inspired Theme - Updated Defaults */
     --radius-sm: 8px;
     --radius-md: 16px;
-    --radius-lg: 24px;
-    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.03); /* Extremely subtle */
-    --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.06);
-    --font-heading: "Poppins", sans-serif; /* Rounder, friendlier */
+    --radius-lg: 20px; /* Slightly tighter curves */
+
+    /* Deep Indigo Sidebar Theme - Overwritten for Teamify Matte Black */
+    --sidebar-bg: #121212;
+    --sidebar-bg-gradient: linear-gradient(180deg, #16161a 0%, #0d0d10 100%);
+    --sidebar-text: #888899;
+    --sidebar-text-active: #ffffff;
+    --sidebar-active-bg: rgba(255, 255, 255, 0.05);
+
+    --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.04);
+    --shadow-hover: 0 20px 50px rgba(0, 0, 0, 0.08);
+    --font-heading: "Poppins", sans-serif;
 
     /* Legacy Vars (Backward Compat) */
     --color-text: var(--text-primary);
@@ -50,15 +58,15 @@
 
 /* Dark Theme overrides */
 /* Dark Mode Override Class (Controlled by JS) */
+/* Main App Background - Dark Mode */
 body.dark-mode {
-    --bg-app: #0a0a0a;
-    --bg-surface: #121212;
-    --text-primary: #f4f1e6; /* brand-light */
-    --text-secondary: #d1d5db;
-    --text-tertiary: #9ca3af;
+    --bg-app: #09090b; /* Zinc 950 - Very dark grey/black */
+    --bg-surface: #141417; /* Zinc 900/Surface */
+    --text-primary: #ededed;
+    --text-secondary: #a1a1aa;
     --border-color: #27272a;
-    --shadow-color: rgba(0, 0, 0, 0.6);
-    --brand-light: rgba(200, 176, 112, 0.2);
+    --shadow-color: rgba(0, 0, 0, 0.8);
+    --brand-light: rgba(200, 176, 112, 0.15);
 }
 
 /* Light Mode Override Class */
@@ -181,54 +189,65 @@ body {
     min-height: 100vh;
 }
 
-/* --- Sidebar Navigation --- */
+/* --- Sidebar Navigation (Teamify / Flush Style) --- */
 .sidebar {
     width: var(--sidebar-width);
-    background-color: var(--bg-surface);
-    border-right: none; /* Removed border for cleaner floating look */
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02); /* Soft separator */
+    /* Flush Sidebar Look */
+    margin: 0;
+    height: 100vh;
+    border-radius: 0; /* Square */
+
+    background: #0f1014; /* Deep, almost black matte */
+    background: linear-gradient(180deg, #13131a 0%, #0a0a0c 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.03); /* Extremely subtle border */
+    color: var(--sidebar-text);
+
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4); /* Shadow to right */
     display: flex;
     flex-direction: column;
     position: fixed;
-    height: 100vh;
     z-index: 50;
     transition: width 0.3s ease;
     top: 0;
     left: 0;
-    padding: 1rem; /* Add padding around nav */
+    padding: 2rem 1.5rem;
 }
 
 .sidebar-header {
-    padding: 1rem 0 2rem 0;
+    padding: 0 0 2rem 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-bottom: none; /* Cleanup */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 1rem;
 }
 
 .logo-circle {
-    width: 50px;
-    height: 50px;
-    border-radius: 16px; /* Squircle */
-    border: none;
-    padding: 0;
-    margin-bottom: 0.75rem;
+    width: 4.5rem; /* Bigger ~72px */
+    height: 4.5rem;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    overflow: hidden;
+    margin-bottom: 1.5rem;
+    padding: 10px;
+}
+
+/* Ensure logo is visible on dark bg */
+.logo-circle img {
+    /* filter: brightness(0) invert(1); */
+    width: 80%;
+    height: auto;
 }
 
 .brand-title {
     font-family: var(--font-heading);
-    color: var(--brand-dark);
-    font-size: 1rem;
-    margin: 0;
-    text-transform: capitalize; /* Less aggressive */
+    color: #fff;
+    font-size: 1.1rem;
     letter-spacing: 0.5px;
-    text-align: center;
-    font-weight: 700;
 }
 
 .nav-links {
@@ -245,56 +264,149 @@ body {
 .nav-links a {
     display: flex;
     align-items: center;
-    padding: 0.85rem 1.25rem;
-    color: var(--text-secondary);
+    padding: 1rem 1.25rem;
+    color: var(--sidebar-text);
     text-decoration: none;
-    border-radius: 14px; /* Soft Pill shape */
+    border-radius: 16px;
     font-weight: 500;
     transition: all 0.2s ease;
     font-family: var(--font-heading);
     font-size: 0.95rem;
+    position: relative;
 }
 
 .nav-links a:hover {
-    background-color: var(--bg-app);
-    color: var(--brand-dark);
-    transform: translateX(2px);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    transform: translateX(4px);
 }
 
 .nav-links li.active a {
     background-color: var(--brand);
-    color: #fff; /* Solid brand color for active, inspiration style */
-    border: none;
-    box-shadow: 0 8px 20px -6px rgba(200, 176, 112, 0.6); /* Soft colored shadow */
-}
-
-/* Force icons white on active */
-.nav-links li.active a .icon {
-    /* filter: brightness(200%); */
+    background: linear-gradient(90deg, var(--brand) 0%, #e0c888 100%); /* Gold gradient */
+    color: #000; /* Contrast text */
+    font-weight: 700;
+    box-shadow: 0 8px 20px -4px rgba(200, 176, 112, 0.4);
 }
 
 .nav-links .icon {
-    margin-right: 12px;
     font-size: 1.2rem;
+    margin-right: 14px;
     min-width: 24px;
     text-align: center;
 }
 
 .sidebar-footer {
-    padding: 1.5rem;
-    text-align: center;
-    font-size: 0.8rem;
-    color: var(--text-tertiary);
-    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* --- Main Content Layout --- */
+/* Adjust Main Content to respect flush sidebar */
 .main-content {
     flex-grow: 1;
     margin-left: var(--sidebar-width);
     padding: 2rem;
     transition: margin-left 0.3s ease;
-    width: calc(100% - var(--sidebar-width)); /* Ensure it takes remaining space properly */
+    width: calc(100% - var(--sidebar-width));
+    max-width: 1600px;
+}
+
+/* --- Sidebar Toggle Button (Integrated) --- */
+.sidebar-toggle-btn {
+    /* Position inside the header instead of hanging out */
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px; /* Soft square */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--sidebar-text);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    z-index: 100;
+    box-shadow: none;
+}
+
+.sidebar-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transform: none; /* simple hover */
+}
+
+/* --- Collapsed State Adjustments --- */
+.sidebar.collapsed {
+    width: var(--sidebar-width-collapsed);
+    padding: 2rem 1rem;
+}
+
+.sidebar.collapsed .brand-title,
+.sidebar.collapsed .sidebar-footer p {
+    display: none;
+}
+
+.sidebar.collapsed .nav-links a {
+    justify-content: center;
+    padding: 1rem;
+}
+
+.sidebar.collapsed .nav-links a span:not(.icon) {
+    display: none; /* Hide text */
+}
+
+.sidebar.collapsed .nav-links .icon {
+    margin-right: 0;
+    font-size: 1.4rem;
+}
+
+/* Re-add omitted collapsed structure styles (needed because previous replace was large) */
+.sidebar.collapsed {
+    width: var(--sidebar-width-collapsed);
+    padding: 2rem 1rem;
+}
+
+.sidebar.collapsed .brand-title,
+.sidebar.collapsed .sidebar-footer p {
+    display: none;
+}
+
+.sidebar.collapsed .nav-links a {
+    justify-content: center;
+    padding: 1rem;
+}
+
+.sidebar.collapsed .nav-links a span:not(.icon) {
+    display: none;
+}
+
+.sidebar.collapsed .nav-links .icon {
+    margin-right: 0;
+    font-size: 1.4rem;
+}
+
+.sidebar.collapsed .logo-circle {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 2rem;
+}
+
+.sidebar.collapsed .logo-circle {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 2rem;
+}
+
+/* Updates for Main Content when Collapsed */
+body.sidebar-collapsed .main-content {
+    margin-left: var(--sidebar-width-collapsed);
+    width: calc(100% - var(--sidebar-width-collapsed));
 }
 
 /* --- Mobile Nav (Bottom) --- */
