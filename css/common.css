@@ -54,6 +54,16 @@
     --spacing-xl: 1rem;
     --spacing-2xl: 2rem;
     --spacing-lg: 0.75rem;
+    /* Pastel Palette */
+    --col-pastel-peach: #ffdac1;
+    --col-pastel-blue: #c7ceea;
+    --col-pastel-green: #e2f0cb;
+    --col-pastel-yellow: #fff5ba;
+
+    /* Semester Themes */
+    --bg-sem1: #faedcd; /* Warm Beige/Peach for Autumn/Winter */
+    --bg-sem2: #e0e7ff; /* Cool Blue/Lavender for Spring/Summer */
+
     /* Chart & Badge Colors */
     --col-blue: #3b5bdb;
     --col-pink: #d6336c;

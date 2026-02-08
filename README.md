@@ -1,73 +1,93 @@
-# AMI Education - Générateur de Bulletins & Enveloppes 🎓
+# AMI Education - Suite de Gestion Scolaire 🎓
 
-Une suite d'outils web pour la gestion scolaire de l'AMI (Association Musulmane de l'Inde). Ce projet permet de générer des bulletins scolaires et d'imprimer des enveloppes à partir de données CSV.
+Une suite d'outils web élégante et performante pour la gestion scolaire de l'AMI (Association Musulmane de l'Inde). Ce projet permet de générer des bulletins scolaires, d'imprimer des enveloppes et de consulter le calendrier scolaire, le tout dans une interface moderne et responsive.
 
 ## ✨ Fonctionnalités
 
 ### 📋 Bulletins Scolaires (`bulletins.html`)
 
 - **Parsing CSV Intelligent** : Import automatique ou manuel des notes via PapaParse.
-- **Design Premium** : Mise en page soignée avec typographie Noto Sans & Amiri.
-- **Calculs Automatisés** : Moyennes, rangs, min/max et appréciations.
-- **Multi-langue** : Support Français/Arabe.
-- **Header Centralisé** : Utilisation d'un fichier `header.html` modifiable pour l'en-tête commun.
+- **Design Premium** : Mise en page soignée avec typographie Noto Sans & Amiri, optimisée pour l'impression A4.
+- **Calculs Automatisés** : Moyennes, rangs, min/max et appréciations générés à la volée.
+- **Support Bilingue** : Affichage mixte Français/Arabe pour les matières concernées.
 
 ### ✉️ Impression d'Enveloppes (`enveloppes.html`)
 
-- **Format C6** : Mise en page spécifique (162mm x 114mm) pour l'impression directe sur enveloppes.
-- **Données Élèves** : Récupération automatique des Noms, Prénoms, Classes et Catégories (A/B) depuis la base de données.
-- **Tri & Filtre** : Tri automatique (Classe → Nom → Prénom) et possibilité de filtrer par classe via l'URL.
-- **Suivi Trimestriel** : Tableau de suivi des signatures inclus.
+- **Format C6** : Mise en page calibrée (162mm x 114mm) pour l'impression directe.
+- **Données Élèves** : Extraction automatique des coordonnées depuis la base de données.
+- **Tri & Filtre** : Organisation par classe et nom, avec filtrage dynamique.
+
+### 📅 Calendrier Scolaire (`calendar.html`)
+
+- **Vue Semestrielle** : Affichage clair des deux semestres côte à côte.
+- **Codes Couleurs** : Distinction visuelle immédiate des vacances, examens et événements spéciaux.
+- **Impression A4** : Mode d'impression optimisé pour tenir sur une seule page portrait, avec légende intégrée.
+- **Design System** : Intégration complète avec le thème global (couleurs, arrondis, typographie).
 
 ## 🚀 Utilisation
 
 ### 1. Génération de Bulletins
 
-Ouvrez `bulletins.html` dans votre navigateur.
+Ouvrez `bulletins.html` :
 
-- **Via URL (Automatique)** : `bulletins.html?year=2025-2026&sem=1&class=M06`
-    - Le sélecteur de classe sera pré-rempli.
-- **Manuel** : Utilisez l'interface pour charger un fichier CSV si le chargement automatique est bloqué ou pour changer de classe manuellement.
+- **Automatique** : `?year=2025-2026&sem=1&class=M06`
+- **Manuel** : Chargez votre CSV et sélectionnez la classe via le tableau de bord.
 
 ### 2. Impression d'Enveloppes
 
-Ouvrez `enveloppes.html` dans votre navigateur.
+Ouvrez `enveloppes.html` :
 
-- **Par défaut** : Affiche toutes les enveloppes triées par Classe, puis Nom.
-- **Filtrer par Classe** : Ajoutez `?class=M06` à l'URL pour n'afficher que les élèves de la M06.
-- **Impression** : Lancez l'impression (`Ctrl+P`) en choisissant le format papier **C6** ou **Personnalisé (162x114mm)**.
+- **Filtrer** : Ajoutez `?class=M06` pour cibler un groupe.
+- **Imprimer** : Utilisez le format papier **C6** ou **Personnalisé (162x114mm)**.
 
-### 3. Modification de l'En-tête
+### 3. Calendrier Scolaire
 
-L'en-tête (Logo, Nom, Adresse) est commun à tous les documents.
+Ouvrez `calendar.html` :
 
-- Modifiez le fichier `header.html` à la racine pour mettre à jour les informations.
-- Les changements se répercuteront immédiatement sur les bulletins et les enveloppes.
+- **Consultation** : Naviguez entre les mois et consultez l'agenda détaillé.
+- **Impression** : `Ctrl+P` pour obtenir une version papier A4 parfaite.
+
+## 🎨 Design System & Responsivité
+
+Le projet repose sur un **Design System** centralisé (`common.css`) garantissant une cohérence visuelle :
+
+- **Palette de Couleurs** : Utilisation de variables CSS (`--brand`, `--bg-surface`, etc.) pour un thème unifié.
+- **Typographie** : _Noto Sans_ pour le corps et _Poppins_ pour les titres.
+- **Composants UI** : Boutons, cartes et formulaires stylisés avec des bordures arrondies (`--radius-lg`) et des ombres douces.
+- **Dark Mode** : Support natif du mode sombre sur toutes les pages.
+
+### Adaptabilité Mobile & Tablette
+
+- **Sidebar** : Navigation latérale rétractable sur Desktop, convertie en barre de navigation inférieure sur Mobile.
+- **Layout** : Grilles Flexbox/Grid fluides s'adaptant à la largeur de l'écran.
+- **Tableaux** : Conteneurs à défilement horizontal pour les petits écrans.
 
 ## 🛠 Structure du Projet
 
 ```
 /
-├── assets/              # Images et logos
-│   └── AMI.png
+├── assets/              # Images, logos et patterns
 ├── css/                 # Feuilles de style
-│   ├── common.css       # Styles partagés (Police, Reset, Header, Tableaux)
-│   ├── bulletin.css     # Style spécifique aux bulletins (A4)
-│   └── envelope.css     # Style spécifique aux enveloppes (C6)
+│   ├── common.css       # Design System (Variables, Reset, Layout, Sidebar)
+│   ├── bulletin.css     # Styles spécifiques (A4 Portrait)
+│   ├── envelope.css     # Styles spécifiques (C6 Paysage)
+│   └── calendar.css     # Styles spécifiques (Calendrier & Agenda)
 ├── js/                  # Logique applicative
-│   ├── common.js        # Fonctions partagées (Chargement Header)
+│   ├── common.js        # Utilitaires globaux (Sidebar, Thème)
 │   ├── config.js        # Configuration (Matières, Professeurs)
-│   ├── bulletin.js      # Logique des bulletins
-│   └── envelope.js      # Logique des enveloppes
-├── data/                # Base de données CSV
-├── header.html          # En-tête HTML commun (editable)
+│   ├── bulletin.js      # Moteur de génération des bulletins
+│   ├── envelope.js      # Moteur d'impression des enveloppes
+│   └── calendar.js      # Logique du calendrier et des événements
+├── data/                # Données CSV
+├── header.html          # En-tête partagé
 ├── bulletins.html       # Page des bulletins
-└── enveloppes.html      # Page des enveloppes
+├── enveloppes.html      # Page des enveloppes
+└── calendar.html        # Page du calendrier
 ```
 
 ## 📚 Technologies
 
-- **HTML5 / CSS3** (Variables CSS, Flexbox, Grid)
-- **Vanilla JavaScript** (ES6+)
-- **PapaParse** (Traitement CSV)
-- **Google Fonts** (Noto Sans, Amiri)
+- **HTML5 / CSS3** : Architecture moderne avec Custom Properties.
+- **Vanilla JavaScript (ES6+)** : Pas de framework lourd, performance maximale.
+- **PapaParse** : Traitement robuste des fichiers CSV.
+- **Google Fonts** : Intégration de polices web optimisées.

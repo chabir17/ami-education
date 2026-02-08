@@ -50,8 +50,10 @@
                 // Next 5 months (Feb-Jun) -> Col 2
                 if (i < 5) {
                     col1.appendChild(monthBlock);
+                    monthBlock.setAttribute("data-semester", "1");
                 } else {
                     col2.appendChild(monthBlock);
+                    monthBlock.setAttribute("data-semester", "2");
                 }
             });
         },

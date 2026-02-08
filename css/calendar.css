@@ -29,6 +29,17 @@
     flex: 1.5; /* wider agenda */
     min-width: 300px;
     padding-top: 0;
+
+    /* Sticky Behavior for Desktop */
+    position: sticky;
+    top: 1rem; /* Stick to top with some gap */
+    align-self: flex-start; /* Required for sticky alignment in flex container */
+    max-height: calc(100vh - 2rem); /* Ensure it scrolls internally if too long */
+    overflow-y: auto; /* Internal scroll if agenda is huge */
+
+    /* Scrollbar styling for internal validation */
+    scrollbar-width: thin;
+    scrollbar-color: var(--brand) transparent;
 }
 
 /* Legend Styles */
@@ -57,13 +68,13 @@
     border-radius: 2px;
 }
 .legend-color.holiday {
-    background-color: #ffeeba;
+    background-color: #ffdac1; /* Pastel Peach */
 }
 .legend-color.exam {
-    background-color: #e6f2ff;
+    background-color: #c7ceea; /* Pastel Periwinkle */
 }
 .legend-color.special {
-    background-color: #d1fae5;
+    background-color: #e2f0cb; /* Pastel Green */
 }
 body.dark-mode .legend-color.holiday {
     background-color: rgba(251, 146, 60, 0.2);
@@ -76,36 +87,44 @@ body.dark-mode .legend-color.special {
 }
 
 /* Month Component */
+/* Month Component */
 .month-block {
     break-inside: avoid;
     background: var(--bg-surface);
-    padding: 0.75rem; /* Reduced padding */
+    padding: 0; /* Content flush to edges */
     border-radius: var(--radius-lg);
     box-shadow: 0 4px 6px var(--shadow-color);
     border: 1px solid var(--border-color);
+    overflow: hidden; /* Clip header corners */
+    display: flex;
+    flex-direction: column;
 }
 
 .month-header {
-    background: transparent;
+    background: var(--bg-surface); /* Default fallback */
     color: var(--brand-dark);
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     text-align: center;
-    padding: 0.25rem;
+    padding: 0.6rem;
     font-size: 13px;
     letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
     border-bottom: 1px solid var(--border-color);
-    border-radius: 0;
 }
-/* Alternate colors if needed, e.g. blue for 2026 */
-.month-block[data-year="2026"] .month-header {
-    background: transparent;
-    color: var(--col-blue); /* Use blue var for 2026 header text if desired, or keep uniform */
+/* Semester Specific Header Backgrounds */
+.month-block[data-semester="1"] .month-header {
+    background-color: var(--bg-sem1); /* Warm Peach/Beige */
+    color: #5d4037; /* Muted brown for contrast */
+}
+.month-block[data-semester="2"] .month-header {
+    background-color: var(--bg-sem2); /* Cool Blue/Lavender */
+    color: #1e3a8a; /* Deep blue for contrast */
 }
 
 /* Days Grid - No Separation Logic */
 .days-grid {
+    padding: 0.75rem; /* Add internal padding */
     display: grid;
     grid-template-columns: 20px repeat(7, 1fr); /* WeekNum + 7 Days */
     gap: 0; /* Remove gap for continuous look */
@@ -178,18 +197,18 @@ body.dark-mode .legend-color.special {
 */
 
 .highlight-holiday {
-    background-color: #ffeeba; /* Yellow/Orange */
-    color: #1a1a1a;
+    background-color: #ffdac1; /* Pastel Peach */
+    color: #5d4037; /* Warm Brown Text */
     font-weight: 600;
 }
 body.dark-mode .highlight-holiday {
-    background-color: rgba(251, 146, 60, 0.2);
-    color: var(--col-orange);
+    background-color: rgba(255, 218, 193, 0.2);
+    color: #ffccbc;
 }
 
 .highlight-exam {
-    background-color: #e6f2ff; /* Light Blue */
-    color: #1e3a8a;
+    background-color: #c7ceea; /* Pastel Periwinkle */
+    color: #283593; /* Deep Indigo Text */
     font-weight: 600;
 }
 body.dark-mode .highlight-exam {
@@ -198,8 +217,8 @@ body.dark-mode .highlight-exam {
 }
 
 .highlight-special {
-    background-color: #d1fae5; /* Light Green */
-    color: #064e3b;
+    background-color: #e2f0cb; /* Pastel Green */
+    color: #33691e; /* Deep Green Text */
     font-weight: 600;
 }
 body.dark-mode .highlight-special {
@@ -361,20 +380,24 @@ body.dark-mode .highlight-special {
 
     /* Compact Month Blocks */
     .month-block {
-        padding: 0.25rem;
+        padding: 0 !important;
         box-shadow: none;
         border: 1px solid #ccc;
+        overflow: hidden;
     }
 
     .month-header {
-        padding: 0.1rem;
+        background: #f0f0f0 !important; /* Light grey for print distinction */
+        padding: 0.2rem;
         font-size: 10px;
-        margin-bottom: 0.1rem;
+        margin-bottom: 0;
         font-weight: 700;
         border-bottom: 1px solid #ccc;
+        color: black !important;
     }
 
     .days-grid {
+        padding: 0.2rem; /* Reduced padding for print compact */
         font-size: 8px; /* Small days */
         gap: 0; /* Continuous */
         row-gap: 1px;
@@ -427,5 +450,45 @@ body.dark-mode .highlight-special {
     .legend-color {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
+    }
+}
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .calendar-container {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+    .calendar-grid {
+        gap: 1rem;
+    }
+    .calendar-agenda {
+        width: 100%;
+        margin-top: 1rem;
+
+        /* Reset Sticky for smaller screens */
+        position: static;
+        max-height: none;
+        overflow-y: visible;
+        align-self: auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .calendar-container {
+        padding: 0.5rem;
+    }
+    .calendar-grid {
+        flex-direction: column;
+    }
+    .month-block {
+        margin-bottom: 1rem;
+    }
+    .agenda-table {
+        font-size: 11px;
+    }
+    .agenda-date {
+        width: auto;
+        white-space: normal;
     }
 }
