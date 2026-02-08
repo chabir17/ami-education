@@ -1,0 +1,431 @@
+/* Calendar App Specific Styles */
+
+/* Page Layout */
+.calendar-container {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem 2rem;
+    max-width: 1600px; /* Wider */
+    margin: 0 auto;
+    font-family: var(--font-fr), sans-serif;
+}
+
+/* Grid for Months */
+.calendar-grid {
+    flex: 3; /* Give more space to calendar */
+    display: flex;
+    gap: 1.5rem;
+}
+
+.calendar-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Agenda / Legend Side */
+.calendar-agenda {
+    flex: 1.5; /* wider agenda */
+    min-width: 300px;
+    padding-top: 0;
+}
+
+/* Legend Styles */
+.calendar-legend {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: var(--bg-surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    font-size: 11px;
+    justify-content: center;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+.legend-color.holiday {
+    background-color: #ffeeba;
+}
+.legend-color.exam {
+    background-color: #e6f2ff;
+}
+.legend-color.special {
+    background-color: #d1fae5;
+}
+body.dark-mode .legend-color.holiday {
+    background-color: rgba(251, 146, 60, 0.2);
+}
+body.dark-mode .legend-color.exam {
+    background-color: rgba(59, 130, 246, 0.2);
+}
+body.dark-mode .legend-color.special {
+    background-color: rgba(16, 185, 129, 0.2);
+}
+
+/* Month Component */
+.month-block {
+    break-inside: avoid;
+    background: var(--bg-surface);
+    padding: 0.75rem; /* Reduced padding */
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 6px var(--shadow-color);
+    border: 1px solid var(--border-color);
+}
+
+.month-header {
+    background: transparent;
+    color: var(--brand-dark);
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0.25rem;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 0;
+}
+/* Alternate colors if needed, e.g. blue for 2026 */
+.month-block[data-year="2026"] .month-header {
+    background: transparent;
+    color: var(--col-blue); /* Use blue var for 2026 header text if desired, or keep uniform */
+}
+
+/* Days Grid - No Separation Logic */
+.days-grid {
+    display: grid;
+    grid-template-columns: 20px repeat(7, 1fr); /* WeekNum + 7 Days */
+    gap: 0; /* Remove gap for continuous look */
+    row-gap: 2px; /* Keep row gap or remove? Let's keep distinct weeks */
+    font-size: 12px;
+    text-align: center;
+}
+
+/* Headers (L M M J V S D) */
+.day-header {
+    font-weight: 600;
+    color: var(--text-tertiary);
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+    border-bottom: none;
+    font-size: 11px;
+}
+
+/* Week Number Column */
+.week-num {
+    color: var(--brand); /* Use brand color */
+    font-weight: 600;
+    text-align: right; /* Right align next to days */
+    padding-right: 8px; /* Spacing */
+    font-size: 9px;
+    display: flex;
+    align-items: center; /* Vertical Center */
+    justify-content: flex-end;
+    height: 100%; /* Full height of row */
+}
+
+/* Day Cell */
+.day-cell {
+    padding: 2px 0; /* Reduced padding */
+    color: var(--text-primary);
+    /* border-radius: 0; No radius for continuous feel, unless start/end */
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px; /* Fixed height for uniformity */
+    margin: 0; /* Ensure no margin */
+}
+
+.day-cell:hover:not(.empty) {
+    background-color: var(--bg-app);
+}
+.day-cell.empty {
+    background: transparent;
+}
+.day-cell.overflow-day {
+    position: relative;
+    border-radius: 4px; /* Overflow days denote separate events usually, keep round */
+}
+
+/* Highlights - Continuous Effect */
+/* We rely on no gap. We need to reset border radius for mid-events if possible.
+   Since we don't have start/end logic in JS yet (only type), we can just make them rectangular or slightly rounded.
+   "Ne mets pas de séparation" implies they should touch.
+*/
+.highlight-holiday,
+.highlight-exam,
+.highlight-special {
+    border-radius: 0; /* Square edges to touch neighbors */
+}
+/* But if a day is isolated, square looks bad? 
+   Ideally we target connected days.
+   For now, we just remove gaps. 
+   We kept row-gap: 2px, so periods spanning weeks will naturally break, which is standard.
+*/
+
+.highlight-holiday {
+    background-color: #ffeeba; /* Yellow/Orange */
+    color: #1a1a1a;
+    font-weight: 600;
+}
+body.dark-mode .highlight-holiday {
+    background-color: rgba(251, 146, 60, 0.2);
+    color: var(--col-orange);
+}
+
+.highlight-exam {
+    background-color: #e6f2ff; /* Light Blue */
+    color: #1e3a8a;
+    font-weight: 600;
+}
+body.dark-mode .highlight-exam {
+    background-color: rgba(59, 130, 246, 0.2);
+    color: var(--col-blue);
+}
+
+.highlight-special {
+    background-color: #d1fae5; /* Light Green */
+    color: #064e3b;
+    font-weight: 600;
+}
+body.dark-mode .highlight-special {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: var(--col-green);
+}
+
+/* Single Day Event Circle */
+.single-day-event {
+    border-radius: 50% !important;
+    width: 24px; /* force width to match height for circle */
+    margin: 0 auto;
+}
+
+/* Range Start (Semi-Circle Left) */
+.event-start {
+    border-top-left-radius: 12px !important;
+    border-bottom-left-radius: 12px !important;
+    margin-left: 2px; /* Small offset if desired */
+}
+
+/* Range End (Semi-Circle Right) */
+.event-end {
+    border-top-right-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+    margin-right: 2px; /* Small offset */
+}
+
+/* Agenda Table */
+.agenda-table {
+    width: 100%;
+    border-collapse: separate; /* Allow border radius */
+    border-spacing: 0;
+    font-size: 13px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    border: 1px solid var(--border-color);
+    margin-top: 0;
+}
+.agenda-table th {
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--brand);
+}
+.agenda-table td {
+    padding: 0.6rem 1rem; /* Reduced vertical padding */
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+    color: var(--text-primary);
+}
+.agenda-table tr:last-child td {
+    border-bottom: none;
+}
+.agenda-date {
+    color: var(--brand); /* Brand color */
+    font-weight: 600;
+    width: 140px;
+}
+.agenda-desc {
+    color: var(--text-secondary);
+}
+
+/* Print Overrides */
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 5mm; /* Very small margins for max space */
+    }
+
+    body {
+        background: white;
+        color: black;
+        font-size: 10px; /* Reduced font body */
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .app-container {
+        display: block;
+        height: auto;
+        overflow: visible;
+    }
+
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: auto;
+    }
+
+    /* Hide UI elements */
+    .sidebar,
+    .controls,
+    .theme-switch-wrapper,
+    .manual-dashboard,
+    .mobile-nav,
+    #sidebar-toggle,
+    #sidebar-container,
+    #header-container {
+        display: none !important; /* Force hide */
+    }
+
+    /* Layout for Portrait */
+    .calendar-container {
+        padding: 0 !important;
+        gap: 1rem !important; /* Tighten gap */
+        display: flex !important;
+        flex-direction: column !important; /* Stack columns vertically */
+        align-items: stretch; /* Full width */
+        max-width: 100%;
+        margin: 0;
+        height: 100%; /* Use height */
+    }
+
+    h1 {
+        margin: 0 0 0.5rem 0 !important;
+        font-size: 18px; /* Smaller Title */
+        text-align: center;
+        width: 100%;
+    }
+
+    .calendar-grid {
+        gap: 1rem !important;
+        flex: 0 0 auto; /* Stop expanding indiscriminately */
+        display: flex !important;
+        flex-direction: row !important; /* Keep months side-by-side */
+    }
+
+    .calendar-column {
+        flex: 1;
+        gap: 0.5rem !important;
+    }
+
+    /* Move Agenda to Bottom */
+    .calendar-agenda {
+        flex: 0 0 auto;
+        padding-top: 0;
+        min-width: 0;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    /* Legend Print Style */
+    .calendar-legend {
+        border: none;
+        padding: 0;
+        margin-bottom: 0.5rem;
+        background: transparent;
+        justify-content: center;
+    }
+
+    /* Compact Month Blocks */
+    .month-block {
+        padding: 0.25rem;
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+
+    .month-header {
+        padding: 0.1rem;
+        font-size: 10px;
+        margin-bottom: 0.1rem;
+        font-weight: 700;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .days-grid {
+        font-size: 8px; /* Small days */
+        gap: 0; /* Continuous */
+        row-gap: 1px;
+    }
+
+    .day-cell {
+        height: 18px; /* Very compact */
+        padding: 0;
+    }
+
+    .week-num {
+        font-size: 6px;
+        height: 18px;
+    }
+
+    /* Compact Agenda */
+    .agenda-table {
+        font-size: 9px;
+        box-shadow: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        page-break-inside: avoid; /* Try to keep agenda together */
+    }
+    .agenda-table th,
+    .agenda-table td {
+        padding: 0.2rem 0.4rem;
+        border-color: #ccc;
+    }
+    .agenda-table th {
+        background: #f0f0f0 !important; /* Light grey header */
+        color: black !important;
+        border-bottom: 1px solid #ccc !important;
+    }
+    .agenda-date {
+        width: auto;
+        white-space: nowrap;
+        font-weight: 600;
+        color: black !important; /* Ensure readable */
+    }
+    .agenda-desc {
+        white-space: normal;
+    }
+
+    /* Ensure colors print */
+    .month-header,
+    .highlight-holiday,
+    .highlight-exam,
+    .highlight-special,
+    .agenda-table th,
+    .legend-color {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}

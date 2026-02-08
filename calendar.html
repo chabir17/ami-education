@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AMI Education - Calendrier Scolaire</title>
+        <link rel="stylesheet" href="css/common.css" />
+        <link rel="stylesheet" href="css/calendar.css" />
+    </head>
+    <body class="light-mode">
+        <div class="app-container">
+            <!-- Sidebar injected via common.js -->
+            <div id="sidebar-container"></div>
+
+            <main class="main-content">
+                <!-- Header injected via common.js -->
+                <div id="header-container"></div>
+
+                <h1 style="text-align: center; margin-bottom: 2rem">CALENDRIER SCOLAIRE 2025/2026</h1>
+
+                <div class="calendar-container">
+                    <!-- Left: Calendar Months Grid -->
+                    <div id="calendar-grid" class="calendar-grid">
+                        <!-- JS Will Inject Month Blocks Here -->
+                    </div>
+
+                    <!-- Right: Agenda / Key Dates -->
+                    <aside class="calendar-agenda">
+                        <table class="agenda-table">
+                            <thead>
+                                <tr>
+                                    <th>Date / Période</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="agenda-body">
+                                <!-- JS Will Inject Agenda Rows Here -->
+                            </tbody>
+                        </table>
+                    </aside>
+                </div>
+            </main>
+        </div>
+
+        <!-- Scripts -->
+        <script src="js/common.js"></script>
+        <script src="js/calendar.js"></script>
+    </body>
+</html>

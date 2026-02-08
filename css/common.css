@@ -297,7 +297,7 @@ body {
     background: rgba(200, 176, 112, 0.15); /* Subtle Gold Glass */
     border: 1px solid rgba(200, 176, 112, 0.25); /* Crisp border */
     color: #ffffff; /* White text for clarity */
-    font-weight: 700;
+    font-weight: 600;
     box-shadow: 0 0 20px rgba(200, 176, 112, 0.1); /* Very soft ambient glow */
 }
 
@@ -609,8 +609,8 @@ body.sidebar-collapsed .main-content {
     justify-content: space-between;
 }
 .dashboard-title {
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--brand-dark);
@@ -648,8 +648,8 @@ body.sidebar-collapsed .main-content {
 }
 
 .form-group label {
-    font-size: 0.7rem;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--text-tertiary);
@@ -738,8 +738,8 @@ body.sidebar-collapsed .main-content {
 
 .picker-group-header {
     width: 100%;
-    font-size: 0.65rem;
-    font-weight: 700;
+    font-size: 10px;
+    font-weight: 600;
     letter-spacing: 0.05em;
     color: #aaa;
     margin-top: 1rem;
@@ -876,9 +876,9 @@ body.sidebar-collapsed .main-content {
     margin-bottom: 2rem;
 }
 .page-title {
-    font-size: 1.8rem;
+    font-size: 28px;
     color: var(--text-primary);
-    font-weight: 700;
+    font-weight: 600;
     margin: 0;
 }
 .admin-badge {
@@ -886,8 +886,8 @@ body.sidebar-collapsed .main-content {
     color: white;
     padding: 0.4rem 1rem;
     border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 600;
     text-transform: uppercase;
 }
 
