@@ -291,6 +291,7 @@ const App = {
                     if (groups[gName].length === 0) return;
 
                     const header = document.createElement("div");
+                    header.className = "picker-group-header";
                     header.textContent = gName;
                     picker.appendChild(header);
 

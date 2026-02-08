@@ -60,9 +60,10 @@
     --col-pastel-green: #e2f0cb;
     --col-pastel-yellow: #fff5ba;
 
-    /* Semester Themes */
-    --bg-sem1: #faedcd; /* Warm Beige/Peach for Autumn/Winter */
-    --bg-sem2: #e0e7ff; /* Cool Blue/Lavender for Spring/Summer */
+    /* Semester Themes & Calendar Colors */
+    --bg-sem1: #e2f0cb; /* Pastel Green */
+    --bg-sem2: #cbe2fa; /* Pastel Blue */
+    --bg-agenda-header: #faedcd; /* Pastel Beige/Peach */
 
     /* Chart & Badge Colors */
     --col-blue: #3b5bdb;
@@ -592,6 +593,46 @@ body.sidebar-collapsed .main-content {
     display: flex;
     align-items: center;
     margin-bottom: 5px;
+}
+
+/* --- Buttons --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    text-decoration: none;
+    gap: 0.5rem;
+}
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background-color: var(--brand);
+    color: white;
+}
+.btn-primary:hover {
+    background-color: var(--brand-dark);
+}
+
+.toolbar-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 /* --- Config Dashboard: Rounded Tile Style --- */
