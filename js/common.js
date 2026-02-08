@@ -225,12 +225,55 @@ const App = {
 
             const semRadios = container.querySelectorAll('input[name="sem"]');
             semRadios.forEach((r) => r.addEventListener("change", () => onConfigChange && onConfigChange()));
+
+            const modeRadios = container.querySelectorAll('input[name="mode"]');
+            modeRadios.forEach((r) =>
+                r.addEventListener("change", (e) => {
+                    const mode = e.target.value;
+                    if (mode === "auto") {
+                        dropzone?.classList.add("hidden");
+                    } else {
+                        dropzone?.classList.remove("hidden");
+                    }
+                    if (onConfigChange) onConfigChange();
+                }),
+            );
+
+            // Set initial visibility based on checked mode
+            const checkedMode = container.querySelector('input[name="mode"]:checked');
+            if (checkedMode && checkedMode.value === "auto") {
+                dropzone?.classList.add("hidden");
+            }
         },
 
         populateClassPicker(classes, onSelect, selectedClass = "all", multiSelect = false) {
             const picker = document.getElementById("class-picker");
             if (!picker) return;
             picker.innerHTML = "";
+
+            // Helper to get group
+            const getGroup = (cls) => {
+                if (cls.startsWith("M")) {
+                    const mMatch = cls.match(/M(\d+)/);
+                    if (mMatch) {
+                        const n = parseInt(mMatch[1]);
+                        if (n >= 1 && n <= 5) return "GRP1";
+                        if (n >= 6 && n <= 10) return "GRP2";
+                    }
+                }
+                if (cls.startsWith("F")) {
+                    return "GRP3";
+                }
+                return "AUTRE";
+            };
+
+            // Group classes
+            const groups = { GRP1: [], GRP2: [], GRP3: [], AUTRE: [] };
+            classes.forEach((cls) => {
+                const g = getGroup(cls);
+                if (groups[g]) groups[g].push(cls);
+                else groups[g] ? groups[g].push(cls) : groups.AUTRE.push(cls);
+            });
 
             if (!multiSelect) {
                 // STANDARD RADIO MODE
@@ -243,16 +286,24 @@ const App = {
                 `;
                 picker.appendChild(allItem);
 
-                // Class items
-                classes.forEach((cls) => {
-                    const item = document.createElement("div");
-                    item.className = "picker-item";
-                    const isChecked = cls === selectedClass;
-                    item.innerHTML = `
-                        <input type="radio" name="className" id="class-${cls}" value="${cls}" ${isChecked ? "checked" : ""} />
-                        <label for="class-${cls}">${cls}</label>
-                    `;
-                    picker.appendChild(item);
+                // Render Groups
+                ["GRP1", "GRP2", "GRP3", "AUTRE"].forEach((gName) => {
+                    if (groups[gName].length === 0) return;
+
+                    const header = document.createElement("div");
+                    header.textContent = gName;
+                    picker.appendChild(header);
+
+                    groups[gName].forEach((cls) => {
+                        const item = document.createElement("div");
+                        item.className = "picker-item";
+                        const isChecked = cls === selectedClass;
+                        item.innerHTML = `
+                            <input type="radio" name="className" id="class-${cls}" value="${cls}" ${isChecked ? "checked" : ""} />
+                            <label for="class-${cls}">${cls}</label>
+                        `;
+                        picker.appendChild(item);
+                    });
                 });
 
                 // Add change listener
@@ -273,18 +324,24 @@ const App = {
                 `;
                 picker.appendChild(allItem);
 
-                // Class items
-                classes.forEach((cls) => {
-                    const item = document.createElement("div");
-                    item.className = "picker-item";
-                    // If selectedClass is array, check if included. If "all", check all.
-                    const isChecked = selectedClass === "all" || (Array.isArray(selectedClass) && selectedClass.includes(cls));
+                ["GRP1", "GRP2", "GRP3", "AUTRE"].forEach((gName) => {
+                    if (groups[gName].length === 0) return;
 
-                    item.innerHTML = `
-                        <input type="checkbox" name="className" id="class-${cls}" value="${cls}" ${isChecked ? "checked" : ""} />
-                        <label for="class-${cls}">${cls}</label>
-                    `;
-                    picker.appendChild(item);
+                    const header = document.createElement("div");
+                    header.className = "picker-group-header";
+                    header.textContent = gName;
+                    picker.appendChild(header);
+
+                    groups[gName].forEach((cls) => {
+                        const item = document.createElement("div");
+                        item.className = "picker-item";
+                        const isChecked = selectedClass === "all" || (Array.isArray(selectedClass) && selectedClass.includes(cls));
+                        item.innerHTML = `
+                             <input type="checkbox" name="className" id="class-${cls}" value="${cls}" ${isChecked ? "checked" : ""} />
+                             <label for="class-${cls}">${cls}</label>
+                         `;
+                        picker.appendChild(item);
+                    });
                 });
 
                 // Logic for Multi-Select
@@ -295,8 +352,6 @@ const App = {
                     const selected = Array.from(classChecks)
                         .filter((c) => c.checked)
                         .map((c) => c.value);
-                    // If all checked, or none (treat as all?), pass "all" or array?
-                    // Let's pass array of selected classes.
                     if (onSelect) onSelect(selected);
                 };
 
@@ -308,11 +363,8 @@ const App = {
 
                 classChecks.forEach((c) => {
                     c.addEventListener("change", () => {
-                        // Uncheck "All" if one is unchecked
                         if (!c.checked) allCheck.checked = false;
-                        // Check "All" if all are checked
                         if (Array.from(classChecks).every((chk) => chk.checked)) allCheck.checked = true;
-
                         updateSelection();
                     });
                 });

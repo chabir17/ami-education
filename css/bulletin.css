@@ -77,6 +77,8 @@
 
 /* Grade Table Specifics */
 /* We use ami-table as base, but override borders/colors */
+/* Grade Table Specifics */
+/* We use ami-table as base, but override borders/colors */
 .grade-table {
     width: 100%;
     border-collapse: collapse;
@@ -89,6 +91,7 @@
 .grade-table th,
 .grade-table td {
     /* Borders handled by ami-table in common.css */
+    border: 1px solid var(--brand);
     padding: 0.5rem;
     vertical-align: middle;
     text-align: center;
@@ -97,6 +100,7 @@
 .grade-table th {
     background-color: var(--brand-light); /* Override grey background */
     color: var(--brand-dark);
+    font-weight: 600;
 }
 
 .col-matieres {

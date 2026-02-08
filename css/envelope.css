@@ -136,10 +136,11 @@
     .dots {
         border-bottom: 1px dotted #000;
     }
+    /* Reverting force black/transparent to keep brand colors */
     .tracking-table th {
-        background-color: transparent !important; /* Clean print */
-        color: #000 !important;
-        border-bottom: 2px solid #000;
+        /* Allow background color */
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
     .separator-line {
         border-bottom: 1px solid #000;

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Feuille de Présence</title>
+
+        <!-- Deps -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+
+        <!-- App CSS -->
+        <link rel="stylesheet" href="css/common.css" />
+        <link rel="stylesheet" href="css/sheets.css" />
+
+        <!-- Scripts -->
+        <script src="js/common.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/presence.js" defer></script>
+    </head>
+    <body>
+        <div class="app-container">
+            <!-- Sidebar -->
+            <div id="sidebar-container" class="no-print"></div>
+
+            <main class="main-content">
+                <!-- Controls (No Print) -->
+                <div class="controls no-print">
+                    <header class="top-bar">
+                        <h1 class="page-title">Feuille de Présence Mensuelle</h1>
+                    </header>
+
+                    <div id="manual-ui" class="manual-dashboard">
+                        <div class="dashboard-grid compact-grid">
+                            <div class="form-section">
+                                <div class="form-group-row-mini">
+                                    <div class="form-group">
+                                        <label>Année</label>
+                                        <select id="input-year">
+                                            <option value="2025-2026" selected>2025/2026</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Mois</label>
+                                        <div class="visual-picker-grid" id="month-picker">
+                                            <div class="picker-item"><input type="radio" name="month" id="m8" value="8" /><label for="m8">SEP</label></div>
+                                            <div class="picker-item"><input type="radio" name="month" id="m9" value="9" /><label for="m9">OCT</label></div>
+                                            <div class="picker-item"><input type="radio" name="month" id="m10" value="10" /><label for="m10">NOV</label></div>
+                                            <div class="picker-item"><input type="radio" name="month" id="m11" value="11" /><label for="m11">DÉC</label></div>
+                                            <div class="picker-item"><input type="radio" name="month" id="m0" value="0" checked /><label for="m0">JAN</label></div>
+                                            <div class="picker-item"><input type="radio" name="month" id="m1" value="1" /><label for="m1">FÉV</label></div>
+                                            <div class="picker-item"><input type="radio" name="month" id="m2" value="2" /><label for="m2">MAR</label></div>
+                                            <div class="picker-item"><input type="radio" name="month" id="m3" value="3" /><label for="m3">AVR</label></div>
+                                            <div class="picker-item"><input type="radio" name="month" id="m4" value="4" /><label for="m4">MAI</label></div>
+                                            <div class="picker-item"><input type="radio" name="month" id="m5" value="5" /><label for="m5">JUI</label></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Classe</label>
+                                    <div class="visual-picker-grid" id="class-picker"></div>
+                                </div>
+                            </div>
+
+                            <!-- Dropzone reuse -->
+                            <div class="upload-section" id="dropzone">
+                                <div class="dropzone-content">
+                                    <div class="upload-icon">📄</div>
+                                    <p class="upload-text">Fichier Élèves <b>CSV</b></p>
+                                    <input type="file" id="manualFile" accept=".csv" class="file-input" />
+                                </div>
+                                <div id="file-info" class="file-info hidden">
+                                    <span class="file-name"></span>
+                                    <button class="remove-file" id="reset-file">×</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Printable Output -->
+                <div id="sheets-container"></div>
+            </main>
+        </div>
+
+        <!-- Template for Presence Sheet -->
+        <template id="sheet-template">
+            <div class="sheet-page">
+                <div class="sheet-header">
+                    <div class="header-group">
+                        <span class="header-item">Professeur : <span class="badge blue js-teacher"></span></span>
+                    </div>
+                    <div class="header-group">
+                        <span class="header-item">Classe : <span class="badge green js-class"></span></span>
+                        <span class="header-item">Groupe : <span class="badge green">GRP1</span></span>
+                    </div>
+                    <div class="header-group">
+                        <span class="header-item">Mois : <span class="badge box js-month-display" style="min-width: 120px; text-align: center"></span></span>
+                    </div>
+                </div>
+
+                <table class="sheet-table">
+                    <thead>
+                        <tr class="js-header-row">
+                            <th class="col-num" rowspan="2">#</th>
+                            <th class="col-name" rowspan="2">NOM</th>
+                            <th class="col-name" rowspan="2">PRÉNOM</th>
+                            <!-- Calendar Days injected here -->
+
+                            <th class="col-obs" rowspan="2">OBSERVATIONS</th>
+                        </tr>
+                        <tr class="js-header-row-2">
+                            <!-- Day numbers injected here -->
+                        </tr>
+                    </thead>
+                    <tbody class="js-tbody"></tbody>
+                </table>
+            </div>
+        </template>
+    </body>
+</html>

@@ -244,21 +244,17 @@
 
         populateClassPicker(selectedClass) {
             if (!this.classPicker) return;
-            this.classPicker.innerHTML = "";
-            const keys = Object.keys(CONFIG.classes);
+            const classes = Object.keys(CONFIG.classes);
 
-            keys.forEach((className, idx) => {
-                // Default to first if no selection, OR check against param
-                const isSelected = selectedClass ? className === selectedClass : idx === 0;
-
-                const item = document.createElement("div");
-                item.className = "picker-item";
-                item.innerHTML = `
-                    <input type="radio" name="className" id="class-${className}" value="${className}" ${isSelected ? "checked" : ""} />
-                    <label for="class-${className}">${className}</label>
-                `;
-                this.classPicker.appendChild(item);
-            });
+            if (App && App.SelectionManager) {
+                App.SelectionManager.populateClassPicker(
+                    classes,
+                    (cls) => {
+                        if (this.onClassChange) this.onClassChange(cls);
+                    },
+                    selectedClass,
+                );
+            }
         },
     };
 
@@ -277,89 +273,76 @@
             const fileInfo = document.getElementById("file-info");
             const dropzoneContent = dropzone.querySelector(".dropzone-content");
             const resetBtn = document.getElementById("reset-file");
+            const modeRadios = document.querySelectorAll('input[name="mode"]');
 
-            const handleFile = (file) => {
-                if (!file) return;
+            // Define loader function
+            const loadData = () => {
+                const modeInput = document.querySelector('input[name="mode"]:checked');
+                const mode = modeInput ? modeInput.value : "auto";
 
-                // Show file info
-                fileInfo.querySelector(".file-name").textContent = file.name;
-                fileInfo.classList.remove("hidden");
-                dropzoneContent.classList.add("hidden");
-                dropzone.classList.add("has-file");
+                if (mode !== "auto") return;
 
-                const manualParams = {
-                    year: document.getElementById("input-year").value,
-                    sem: document.querySelector('input[name="sem"]:checked').value,
-                    className: document.querySelector('input[name="className"]:checked').value,
-                };
+                const yearInput = document.getElementById("input-year");
+                const semInput = document.querySelector('input[name="sem"]:checked');
+                const clsInput = document.querySelector('input[name="className"]:checked');
 
-                UIController.setStatus(`Lecture de <b>${file.name}</b>...`);
-                DataService.parseFile(
-                    file,
-                    (rawData) => this.handleData(rawData, manualParams),
-                    (err) => UIController.setStatus(`<span class="error-msg">Erreur : ${err}</span>`),
+                if (!yearInput || !semInput) return;
+
+                const year = yearInput.value;
+                const sem = semInput.value;
+                // If no class selected (e.g. at start), fallback
+                const className = clsInput ? clsInput.value : "M06";
+
+                const params = { year, sem, className };
+                const yearUnderscore = params.year.replace("-", "_");
+                const path = `data/${params.year}/SEMESTRE ${params.sem}/[AMI] NOTES - ${yearUnderscore} - SEMESTRE ${params.sem} - ${params.className}.csv`;
+
+                UIController.setStatus(`Chargement auto : <b>${path}</b>...`);
+                DataService.fetchCSV(
+                    path,
+                    (rawData) => this.handleData(rawData, params),
+                    () => {
+                        UIController.setStatus(`<span class="error-msg">Introuvable: ${className}</span>`);
+                        UIController.container.innerHTML = "";
+                    },
                 );
             };
 
-            // Drag and Drop listeners
-            dropzone.addEventListener("dragover", (e) => {
-                e.preventDefault();
-                dropzone.classList.add("dragover");
-            });
+            // Link UI Controller callback
+            UIController.onClassChange = (cls) => {
+                loadData();
+            };
 
-            dropzone.addEventListener("dragleave", () => {
-                dropzone.classList.remove("dragover");
-            });
+            const toggleMode = (mode) => {
+                if (mode === "auto") {
+                    dropzone.classList.add("hidden");
+                    loadData();
+                } else {
+                    dropzone.classList.remove("hidden");
+                    UIController.setStatus("Mode Manuel : Chargez votre CSV.");
+                }
+            };
 
-            dropzone.addEventListener("drop", (e) => {
-                e.preventDefault();
-                dropzone.classList.remove("dragover");
-                const file = e.dataTransfer.files[0];
-                handleFile(file);
-            });
+            modeRadios.forEach((r) => r.addEventListener("change", (e) => toggleMode(e.target.value)));
 
-            fileInput.addEventListener("change", (e) => {
-                handleFile(e.target.files[0]);
-            });
+            // Year and Sem Listeners
+            document.getElementById("input-year").addEventListener("change", loadData);
+            document.querySelectorAll('input[name="sem"]').forEach((r) => r.addEventListener("change", loadData));
 
-            resetBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                fileInput.value = "";
-                fileInfo.classList.add("hidden");
-                dropzoneContent.classList.remove("hidden");
-                dropzone.classList.remove("has-file");
-                UIController.setStatus("Veuillez sélectionner un fichier CSV");
-                UIController.container.innerHTML = "";
-            });
+            // Initialize UI
+            // We set default class but wait to toggle mode
+            const defaultClass = "M06";
 
-            const params = Utils.getURLParams();
-            if (!params) {
-                UIController.setStatus("Veuillez sélectionner un fichier CSV");
-                UIController.populateClassPicker(); // Default pop
-                UIController.showManualUI();
-                return;
-            }
+            // Important: Populate picker FIRST so input[name=className] exists
+            UIController.populateClassPicker(defaultClass);
 
-            // Populate picker with current selection so user sees it
-            UIController.populateClassPicker(params.className);
-
-            // Show the UI with the controls so user can see what's happening
             UIController.showManualUI();
 
-            // Auto-fetch mode
-            const yearUnderscore = params.year.replace("-", "_");
-            const path = `data/${params.year}/SEMESTRE ${params.sem}/[AMI] NOTES - ${yearUnderscore} - SEMESTRE ${params.sem} - ${params.className}.csv`;
-
-            UIController.setStatus(`Chargement auto : <b>${params.className}</b>...`);
-
-            DataService.fetchCSV(
-                path,
-                (rawData) => this.handleData(rawData, params),
-                () => {
-                    UIController.setStatus(`<span class="error-msg">Fichier introuvable : <b>${params.className}</b>. Utilisez le mode manuel.</span>`);
-                    UIController.showManualUI();
-                },
-            );
+            // Start in Auto Mode
+            // This will trigger loadData, which now finds the checked input (populated above)
+            // Start in Auto Mode
+            // This will trigger loadData, which now finds the checked input (populated above)
+            toggleMode("auto");
         },
 
         handleData(rawData, params) {

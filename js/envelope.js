@@ -67,21 +67,18 @@ document.addEventListener("DOMContentLoaded", () => {
         // Extract Unique Classes
         const classes = [...new Set(currentData.map((s) => s.Classe).filter((c) => c))].sort();
 
-        // Populate Picker (MultiSelect: true)
+        // Populate Picker (Single Select)
         if (App.SelectionManager) {
-            // Set initial to ALL classes array or "all" string handling.
-            // Let's default to filtering ALL selected.
-            currentClass = classes; // Default to all selected array
+            currentClass = "all";
 
             App.SelectionManager.populateClassPicker(
                 classes,
                 (selected) => {
-                    // Update current selection (array of strings)
                     currentClass = selected;
                     render();
                 },
                 currentClass,
-                true, // Enable Multi-select
+                false, // Disable Multi-select (Single Radio Mode)
             );
         }
 
@@ -90,27 +87,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function handleConfigChange() {
-        // Year change could trigger reload, but for now we just re-render if needed
-        // Since we don't have year-based paths for envelopes dynamic loading yet,
-        // we mainly rely on the loaded data.
-        render();
+        const container = document.getElementById("config-container");
+        const modeInput = container.querySelector('input[name="mode"]:checked');
+        const mode = modeInput ? modeInput.value : "auto";
+
+        if (mode === "auto") {
+            loadDefaultCSV();
+        } else {
+            STATUS_EL.textContent = "Mode Manuel: Veuillez charger un fichier.";
+        }
     }
 
     function render() {
         if (!currentData.length) return;
 
-        // Filter: check if class is in selected array
+        // Filter
         let filtered = currentData;
-
-        // If currentClass is array
-        if (Array.isArray(currentClass)) {
-            if (currentClass.length === 0) {
-                filtered = []; // Nothing selected
-            } else {
-                filtered = currentData.filter((student) => currentClass.includes(student.Classe));
-            }
-        } else if (currentClass !== "all") {
-            // Fallback for single select string if somehow set (e.g. legacy)
+        if (currentClass !== "all") {
             filtered = currentData.filter((s) => s.Classe === currentClass);
         }
 
