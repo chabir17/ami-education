@@ -533,31 +533,35 @@ body.sidebar-collapsed .main-content {
 /* --- Shared Table Components --- */
 .ami-table {
     width: 100%;
-    border-collapse: collapse; /* Cleaner lines */
+    border-collapse: separate; /* Changed to separate for border-radius */
     border-spacing: 0;
     font-size: 13px;
-    border: none; /* Remove outer border */
+    border: 1px solid var(--brand); /* Add outer border frame */
     border-radius: 8px;
     overflow: hidden;
     background: var(--bg-surface);
 }
 .ami-table th,
 .ami-table td {
-    border-bottom: 1px solid var(--brand); /* Horizontal lines only */
+    border-bottom: 1px solid var(--brand);
     border-right: none;
-    padding: 1rem; /* More padding */
-    text-align: left; /* Default align left for modern look */
+    padding: 1rem;
+    text-align: left;
     vertical-align: middle;
     color: var(--text-primary);
 }
+.ami-table tbody tr:last-child td {
+    border-bottom: none;
+}
 .ami-table th {
-    background-color: var(--brand-light); /* Use App BG for header distinction */
+    background-color: var(--brand-light);
     font-weight: 600;
     text-transform: uppercase;
-    color: var(--brand-dark); /* Grey text for headers */
+    color: var(--brand-dark);
     font-size: 12px;
     letter-spacing: 0.05em;
     border-bottom: 2px solid var(--brand);
+    border-top: none;
 }
 .ami-table tbody tr:hover {
     background-color: var(--brand-light); /* Highlight on hover */

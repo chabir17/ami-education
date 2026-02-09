@@ -81,9 +81,10 @@
 /* We use ami-table as base, but override borders/colors */
 .grade-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     font-size: 13px;
-    border: 1px solid var(--brand);
+    border: 1px solid var(--brand); /* Outer border */
     border-radius: 8px; /* Note: border-radius on table doesn't always work without hidden overflow */
     overflow: hidden;
 }
@@ -91,16 +92,25 @@
 .grade-table th,
 .grade-table td {
     /* Borders handled by ami-table in common.css */
-    border: 1px solid var(--brand);
+    border-bottom: 1px solid var(--brand);
+    border-right: 1px solid var(--brand);
     padding: 0.5rem;
     vertical-align: middle;
     text-align: center;
+}
+.grade-table th:last-child,
+.grade-table td:last-child {
+    border-right: none;
+}
+.grade-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .grade-table th {
     background-color: var(--brand-light); /* Override grey background */
     color: var(--brand-dark);
     font-weight: 600;
+    border-bottom: 2px solid var(--brand); /* Thicker bottom border for headers */
 }
 
 .col-matieres {

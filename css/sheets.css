@@ -151,17 +151,64 @@
 /* Tables */
 .sheet-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     font-family: var(--font-fr);
     font-size: 12px;
+    /* Remove wrapper border to allow header separation */
+    border: none;
+    border-radius: 0;
+    overflow: visible;
 }
 
 .sheet-table th,
 .sheet-table td {
-    border: 1px solid var(--brand);
-    padding: 6px 4px; /* Tight padding */
+    border-bottom: 1px solid var(--brand);
+    border-right: 1px solid var(--brand);
+    padding: 6px 4px;
     text-align: center;
     vertical-align: middle;
+}
+
+/* Fix Left Border for the Grid Part */
+/* All Grid Rows (excluding .print-header-row) First Cell */
+.sheet-table thead tr:not(.print-header-row) th:first-child,
+.sheet-table tbody tr td:first-child {
+    border-left: 1px solid var(--brand);
+}
+
+/* Remove Right Border from last child is Default behavior usually, but we want a CLOSED box */
+.sheet-table th:last-child,
+.sheet-table td:last-child {
+    border-right: 1px solid var(--brand);
+}
+
+/* Top Border for Grid Header (Row 2) */
+.sheet-table thead tr:nth-child(2) th {
+    border-top: 1px solid var(--brand);
+}
+
+/* Rounded Corners for Grid */
+/* Top Left */
+.sheet-table thead tr:nth-child(2) th:first-child {
+    border-top-left-radius: 8px;
+}
+/* Top Right */
+.sheet-table thead tr:nth-child(2) th:last-child {
+    border-top-right-radius: 8px;
+}
+/* Bottom Left */
+.sheet-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+/* Bottom Right */
+.sheet-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+}
+
+/* Ensure Last Row has Bottom Border */
+.sheet-table tbody tr:last-child td {
+    border-bottom: 1px solid var(--brand);
 }
 
 /* Table Header Styling */
@@ -170,21 +217,17 @@
     font-weight: 600;
     text-transform: uppercase;
     color: var(--brand-dark);
-}
-
-.sheet-table {
-    border-radius: 8px;
-    overflow: hidden;
+    border-bottom: 2px solid var(--brand); /* Thicker bottom border */
 }
 
 /* Day/Num border removal */
 .day-col-header {
     border-bottom: none !important;
 }
-.sheet-table thead tr:nth-child(2) th {
-    border-top: none !important;
+/* Ensure the last row of headers (day numbers) has the bottom border */
+.sheet-table thead tr:last-child th.day-col-header {
+    border-bottom: 2px solid var(--brand) !important;
 }
-
 /* Specific Column Widths & Styles */
 .col-num {
     width: 40px;
@@ -194,7 +237,10 @@
     background: transparent; /* No background */
 }
 
-.col-name {
+/* Align Name and Surname Left */
+.col-name,
+.sheet-table tbody td:nth-child(2),
+.sheet-table tbody td:nth-child(3) {
     text-align: left !important;
     padding-left: 10px !important;
     font-weight: normal;
@@ -202,52 +248,37 @@
 }
 
 .col-empty {
-    min-width: 60px;
+    min-width: 70px;
+    vertical-align: middle;
+    font-size: 10px; /* French label underneath */
+    font-weight: 600;
+    color: var(--brand-dark);
+}
+
+.col-empty span.ar {
+    display: block;
+    font-size: 1.25em; /* Larger Arabic */
+    line-height: 1.2;
+    margin-bottom: 2px;
 }
 
 .col-obs {
     min-width: 150px;
 }
 
-/* Row Styling */
-.sheet-table tbody tr {
-    height: 28px;
-}
-.sheet-table tbody tr:nth-child(even) {
-    background-color: #fcfcfc;
-}
-
-/* Arabic Headers Support */
-.ar {
-    font-family: var(--font-ar);
-    display: block;
-    font-size: 1.1em;
-}
-
-/* Presence specific */
-.day-col-header {
-    font-size: 10px;
-    line-height: 1.1;
-    min-width: 25px;
-    background: #f3f4f6;
-    font-weight: 600; /* Semi-bold */
-}
-.day-name {
-    display: block;
-}
-.day-num {
-    display: block;
-}
-
-/* Printing: Repeat headers */
+/* Print Header Row (The detached header) */
 .print-header-row td {
     border: none !important;
     background: transparent !important;
     padding: 0 !important;
     height: auto !important;
 }
+/* Specific Reset for the Header Cell */
+.sheet-table thead tr.print-header-row td {
+    border: none !important;
+}
+
 .print-header-row .sheet-header {
     margin-bottom: 1rem;
     width: 100%;
-    /* Keep existing borders/padding */
 }

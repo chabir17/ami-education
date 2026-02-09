@@ -104,15 +104,27 @@
 /* Enveloppe Table (Inherits .ami-table from common.css) */
 .enveloppe-table {
     margin-top: auto; /* Push to bottom */
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--brand);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .enveloppe-table td,
 .enveloppe-table th {
-    border: 1px solid var(--brand); /* Brand color borders */
+    border-bottom: 1px solid var(--brand); /* Brand color borders */
+    border-right: 1px solid var(--brand);
     padding: 0.5rem;
     text-align: center; /* Center align text */
     font-size: 13px; /* Set font size to 13px */
+}
+.enveloppe-table th:last-child,
+.enveloppe-table td:last-child {
+    border-right: none;
+}
+.enveloppe-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 /* Remove duplicate style defs handled by common.css .ami-table */
@@ -121,6 +133,7 @@
     background-color: var(--brand-light); /* Ensure header bg */
     vertical-align: middle;
     color: var(--brand-dark); /* Ensure brand dark text */
+    border-bottom: 2px solid var(--brand); /* Thicker bottom border */
 }
 
 .year-col {
