@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 clone.querySelector(".js-teacher").textContent = teacher;
                 clone.querySelector(".js-class").textContent = cls;
                 clone.querySelector(".js-sem").textContent = "Semestre " + State.cSem;
-                clone.querySelector(".js-year").textContent = State.year;
+                clone.querySelector(".js-year").textContent = State.year.replace("-", "/");
 
                 // Body
                 const tbody = clone.querySelector(".js-tbody");

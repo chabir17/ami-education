@@ -103,7 +103,7 @@ body.dark-mode .legend-color.special {
 .month-header {
     background: var(--bg-surface); /* Default fallback */
     color: var(--brand-dark);
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     text-align: center;
     padding: 0.6rem;
@@ -391,7 +391,7 @@ body.dark-mode .highlight-special {
         padding: 0.2rem;
         font-size: 10px;
         margin-bottom: 0;
-        font-weight: 700;
+        font-weight: 600;
         border-bottom: 1px solid #ccc;
         color: black !important;
     }

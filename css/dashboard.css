@@ -76,13 +76,13 @@ body.dark-mode .hero-card {
 }
 
 .hero-text h1 {
-    font-size: 1.5rem;
+    font-size: 24px;
     margin: 0 0 0.5rem 0;
     font-family: var(--font-heading);
 }
 
 .hero-text p {
-    font-size: 0.9rem;
+    font-size: 14px;
     margin: 0 0 1.5rem 0;
     opacity: 0.9;
 }
@@ -106,7 +106,7 @@ body.dark-mode .hero-big-stats {
 }
 .hbs-val {
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1;
 }
 .hbs-lbl {
@@ -244,7 +244,7 @@ body.dark-mode .stats-list-card .sl-icon {
 }
 .sl-val {
     font-size: 1.1rem;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-primary);
 }
 
@@ -304,7 +304,7 @@ body.dark-mode .stats-list-card .sl-icon {
     color: var(--text-tertiary);
     text-transform: uppercase;
     font-size: 0.7rem;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 1px;
     border: none;
     padding: 0 1rem;
@@ -354,7 +354,7 @@ body.dark-mode .modern-table tbody tr:hover {
     padding: 0.25rem 0.75rem;
     border-radius: 999px;
     font-size: 0.8rem;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     min-width: 60px;
     text-align: center;

@@ -269,7 +269,7 @@ body {
 .brand-title {
     font-family: var(--font-heading);
     color: #fff;
-    font-size: 1.1rem;
+    font-size: 16px;
     letter-spacing: 0.5px;
 }
 
@@ -294,7 +294,7 @@ body {
     font-weight: 500;
     transition: all 0.2s ease;
     font-family: var(--font-heading);
-    font-size: 0.95rem;
+    font-size: 15.2px;
     position: relative;
 }
 
@@ -318,7 +318,7 @@ body {
 }
 
 .nav-links .icon {
-    font-size: 1.2rem;
+    font-size: 20px;
     margin-right: 14px;
     min-width: 24px;
     text-align: center;
@@ -327,7 +327,7 @@ body {
 .sidebar-footer {
     padding-top: 1rem;
     color: rgba(255, 255, 255, 0.3);
-    font-size: 0.75rem;
+    font-size: 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -510,17 +510,13 @@ body.sidebar-collapsed .main-content {
     font-weight: 600;
     font-size: 14px;
     text-transform: uppercase;
-    color: var(--brand-dark); /* Ensure using var */
-}
-/* Force darker color for print headers specifically if needed */
-.header-title,
-.header-address {
-    color: #000;
+    color: var(--brand-dark);
 }
 
 .header-address {
     font-size: 10px;
     line-height: 1.4;
+    color: var(--text-secondary);
 }
 .logo-box {
     width: 1.4cm;
@@ -554,19 +550,12 @@ body.sidebar-collapsed .main-content {
     vertical-align: middle;
     color: var(--text-primary);
 }
-.ami-table th:last-child,
-.ami-table td:last-child {
-    border-right: none;
-}
-.ami-table tr:last-child td {
-    border-bottom: none;
-}
 .ami-table th {
     background-color: var(--brand-light); /* Use App BG for header distinction */
     font-weight: 600;
     text-transform: uppercase;
     color: var(--brand-dark); /* Grey text for headers */
-    font-size: 0.75rem;
+    font-size: 12px;
     letter-spacing: 0.05em;
     border-bottom: 2px solid var(--brand);
 }
@@ -606,7 +595,7 @@ body.sidebar-collapsed .main-content {
     cursor: pointer;
     transition: all 0.2s ease;
     border: none;
-    font-size: 0.9rem;
+    font-size: 14px;
     line-height: 1.2;
     text-decoration: none;
     gap: 0.5rem;

@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
             targetClasses = [State.currentClass];
         }
 
-        const STUDENTS_PER_PAGE = 28;
+        const STUDENTS_PER_PAGE = 30;
         const calYear = getCalendarYear(State.year, State.month);
         const allDays = getDaysInMonth(State.month, calYear);
 

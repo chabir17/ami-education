@@ -11,8 +11,9 @@
     }
     body {
         background: white;
-        color: black;
+        color: var(--text-primary);
         -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
     .main-content {
         margin-left: 0 !important;
@@ -45,25 +46,88 @@
 }
 
 /* Header Sections */
+/* Clean Modern Header */
 .sheet-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #000;
-    padding-bottom: 15px;
-    margin-bottom: 20px;
+    border-bottom: 2px solid var(--brand); /* Use Brand Color */
+    padding: 10px 0; /* Reduced padding */
+    margin-bottom: 15px; /* Reduced margin */
     font-family: var(--font-fr);
+}
+
+.header-info {
+    display: flex;
+    gap: 30px; /* Space between groups */
+    align-items: center;
 }
 
 .header-group {
     display: flex;
-    gap: 20px;
-    align-items: center;
+    flex-direction: column; /* Stack label and value */
+    gap: 2px;
 }
 
-.header-item {
+.header-label {
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    color: var(--brand); /* Updated to Brand color */
+}
+
+.header-value {
     font-size: 14px;
     font-weight: 600;
+    color: var(--brand-dark); /* Updated to Brand Dark */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Minimal Badge */
+.badge-minimal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0; /* Remove padding */
+    border-radius: 0; /* Remove radius */
+    font-size: 14px; /* Match header value size */
+    font-weight: 600;
+    line-height: 1;
+}
+
+.badge-minimal.class {
+    background-color: transparent;
+    color: var(--brand-dark);
+}
+
+.badge-minimal.group {
+    background-color: transparent;
+    color: var(--brand-dark);
+}
+
+.badge-minimal.group::before {
+    content: "•";
+    margin: 0 6px;
+    color: var(--brand);
+}
+
+.header-title-block {
+    text-align: right;
+}
+
+.header-title-main {
+    font-size: 16px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--brand);
+}
+
+.header-title-sub {
+    font-size: 12px;
+    color: #4b5563; /* Gray-600 */
+    font-weight: 500;
 }
 
 /* Badges in Header */
@@ -72,7 +136,7 @@
     padding: 4px 12px;
     border-radius: 12px;
     background: #e5e7eb;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 12px;
 }
 .badge.blue {
@@ -125,9 +189,9 @@
 .col-num {
     width: 40px;
     text-align: center;
-    font-weight: bold;
+    font-weight: 400; /* Non-bold */
     color: var(--brand-dark);
-    background: var(--brand-light);
+    background: transparent; /* No background */
 }
 
 .col-name {
