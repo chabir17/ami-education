@@ -169,6 +169,11 @@
     border-top: 2px solid var(--brand) !important;
 }
 
+/* Border-top 2px for the Akhlaq (Behavior) row */
+.grade-table tbody tr.row-discipline td {
+    border-top: 1.5px solid var(--brand) !important;
+}
+
 /* Re-enforce right borders for footer cells, EXCEPT the last one */
 .footer-row td,
 .grade-table tfoot tr td,
