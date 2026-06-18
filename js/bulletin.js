@@ -171,7 +171,7 @@
 
             const teacher = CONFIG.classes[params.className]?.teacher || "Professeur";
             const dateStr = new Date().toLocaleDateString("fr-FR");
-            const semStr = params.sem == "1" ? "1ER" : "2ND";
+            const semStr = params.sem == "1" ? "1<sup>ER</sup>" : "2<sup>ND</sup>";
             const yearStr = (params.year || "2025-2026").replace("-", "/");
 
             students.forEach((student) => {
@@ -192,8 +192,8 @@
                 pageClone.querySelector(".js-teacher-name").textContent = teacher;
                 pageClone.querySelector(".js-class-name").textContent = params.className;
                 pageClone.querySelector(".js-date-bottom").textContent = dateStr;
-                pageClone.querySelector(".js-bulletin-title").textContent = `BULLETIN DU ${semStr} SEMESTRE ${yearStr}`;
-                pageClone.querySelector(".js-sem-header").textContent = `${semStr} SEM.`;
+                pageClone.querySelector(".js-bulletin-title").innerHTML = `BULLETIN DU ${semStr} SEMESTRE ${yearStr}`;
+                pageClone.querySelector(".js-sem-header").innerHTML = `${semStr} SEM.`;
                 pageClone.querySelector(".js-student-count-cell").textContent = `(${students.length} ÉLÈVES)`;
 
                 // Footer Metrics

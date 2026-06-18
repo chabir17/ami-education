@@ -279,7 +279,7 @@
 
                 const descCell = document.createElement("td");
                 descCell.className = "agenda-desc";
-                descCell.textContent = ev.desc;
+                descCell.innerHTML = ev.desc.replace(/1er/gi, "1<sup>er</sup>").replace(/2nd/gi, "2<sup>nd</sup>");
 
                 row.appendChild(dateCell);
                 row.appendChild(descCell);

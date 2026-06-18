@@ -234,11 +234,21 @@
 .grade-table tbody tr:nth-last-child(2) td {
     border-bottom: 1px solid var(--brand);
 }
+/* Footer Container */
+.bulletin-footer {
+    position: absolute;
+    bottom: var(--spacing-2xl);
+    left: var(--spacing-2xl);
+    right: var(--spacing-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
 /* Bottom Section */
 .bottom-section {
     display: flex;
     justify-content: space-between;
-    margin-top: 1.25rem;
 }
 .appr-box {
     border: 1px solid var(--brand);
@@ -267,17 +277,14 @@
 .visa-box {
     width: 40%;
     text-align: center;
-    padding-top: 1.875rem;
     font-weight: 600;
     color: var(--brand-dark);
 }
 
 .legal-strip {
-    margin-top: auto;
     border-top: 1px solid var(--brand);
     padding-top: 0.3125rem;
     display: flex;
     justify-content: space-between;
     font-size: 10px;
-    /* Legal strip needs to be at bottom, margin-top: auto handles it */
 }
