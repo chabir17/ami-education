@@ -17,11 +17,13 @@
     background: white;
     width: var(--page-width);
     height: var(--page-height);
-    padding: var(--spacing-2xl) var(--spacing-2xl); /* 1.25rem = ~20mm approx */
+    padding: var(--spacing-xl) var(--spacing-xl); /* Reduced padding */
     margin: 3.125rem auto;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
     position: relative;
     page-break-after: always;
+    display: flex;
+    flex-direction: column;
 }
 
 @media print {
@@ -55,18 +57,18 @@
 }
 .separator-line {
     border-bottom: 1px solid var(--brand);
-    margin: 0.625rem 0;
+    margin: 0.3rem 0;
 }
 
 /* Info Section */
 .info-section {
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.8rem;
 }
 .info-row {
     display: flex;
     justify-content: space-between;
-    font-size: 16px;
-    margin-bottom: 0.3125rem;
+    font-size: 15px;
+    margin-bottom: 0.4rem;
 }
 .info-label {
     color: var(--color-grey);
@@ -79,11 +81,11 @@
 
 .bulletin-title {
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
     color: var(--brand-dark);
     text-transform: uppercase;
-    margin: 1.25rem 0;
+    margin: 0.8rem 0;
 }
 
 /* Grade Table Specifics */
@@ -93,18 +95,17 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 13px;
+    font-size: 12px;
     border: 1px solid var(--brand);
     border-radius: 8px;
     overflow: hidden;
 }
 
-/* All Cells: Bottom and Right borders */
 .grade-table th,
 .grade-table td {
     border-bottom: 1px solid var(--brand);
     border-right: 1px solid var(--brand);
-    padding: 0.5rem;
+    padding: 0.3rem 0.5rem;
     vertical-align: middle;
     text-align: center;
     border-top: none;
@@ -181,24 +182,25 @@
 
 /* Col styles */
 /* Highlight Student Grade Header */
-/* The header for student grades is '1ER SEM.' which is the 1st th of the 2nd row */
-.grade-table thead tr:nth-child(2) th:first-child {
+.grade-table thead tr:nth-child(2) th.js-sem-header,
+.grade-table thead tr:nth-child(2) th.js-sem1-header,
+.grade-table thead tr:nth-child(2) th.js-sem2-header {
     background-color: var(--brand-light); /* Highlight */
     color: var(--brand-dark);
     border-right: 1px solid var(--brand) !important;
 }
 
-/* Highlight Student Grades (Column 2) */
-.grade-table tbody td:nth-child(2) {
+/* Highlight Student Grades */
+.grade-table tbody td.cell-note {
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14px;
     background-color: var(--brand-light);
     color: var(--brand-dark);
 }
 /* Adjust footer highlight */
-.footer-row td:nth-child(2) {
+.grade-table tfoot td.cell-note {
     font-weight: 600;
-    font-size: 17px;
+    font-size: 14px;
     background-color: var(--brand-light);
 }
 
@@ -236,13 +238,10 @@
 }
 /* Footer Container */
 .bulletin-footer {
-    position: absolute;
-    bottom: var(--spacing-2xl);
-    left: var(--spacing-2xl);
-    right: var(--spacing-2xl);
+    margin-top: auto;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
 /* Bottom Section */
@@ -254,13 +253,13 @@
     border: 1px solid var(--brand);
     border-radius: 8px;
     width: 45%;
-    padding: 0.625rem;
+    padding: 0.8rem;
 }
 .appr-title {
     font-weight: 600;
     text-decoration: underline;
     color: var(--brand-dark);
-    margin-bottom: 0.625rem;
+    margin-bottom: 0.8rem;
     display: block;
 }
 /* --- Shared Checkbox Style MOVED TO COMMON.CSS --- */
@@ -283,8 +282,8 @@
 
 .legal-strip {
     border-top: 1px solid var(--brand);
-    padding-top: 0.3125rem;
+    padding-top: 0.5rem;
     display: flex;
     justify-content: space-between;
-    font-size: 10px;
+    font-size: 11px;
 }
