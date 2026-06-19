@@ -139,37 +139,39 @@
 
                 <h1 class="bulletin-title js-bulletin-title"></h1>
 
-                <table class="ami-table grade-table">
-                    <thead>
-                        <tr>
-                            <th class="col-matieres" rowspan="2">MATIÈRES</th>
-                            <th class="col-eleve" id="js-col-eleve-header">ÉLÈVE</th>
-                            <th colspan="3">CLASSE</th>
-                            <th class="col-appreciations" rowspan="2">APPRÉCIATIONS GÉNÉRALES</th>
-                        </tr>
-                        <tr id="js-subheader-row">
-                            <th class="js-sem-header"></th>
-                            <th class="col-classe-moy">MOY.</th>
-                            <th class="col-classe-min">MIN.</th>
-                            <th class="col-classe-max">MAX.</th>
-                        </tr>
-                    </thead>
-                    <tbody class="js-table-body">
-                        <!-- Rows injected here -->
-                    </tbody>
-                    <tfoot>
-                        <tr class="footer-row">
-                            <td class="total-cell">MOYENNE GÉNÉRALE</td>
-                            <td class="cell-note cell-avg-val js-avg-20"></td>
-                            <td class="cell-stats-box js-student-count-cell" colspan="3" rowspan="2"></td>
-                            <td class="cell-footer-merged js-mention-display" rowspan="2"></td>
-                        </tr>
-                        <tr class="footer-row">
-                            <td class="rang-cell cell-footer-bottom">RANG</td>
-                            <td class="cell-note cell-footer-bottom js-rang-display"></td>
-                        </tr>
-                    </tfoot>
-                </table>
+                <div class="table-container">
+                    <table class="ami-table grade-table">
+                        <thead>
+                            <tr>
+                                <th class="col-matieres" rowspan="2">MATIÈRES</th>
+                                <th class="col-eleve" id="js-col-eleve-header">ÉLÈVE</th>
+                                <th colspan="3">CLASSE</th>
+                                <th class="col-appreciations" rowspan="2">APPRÉCIATIONS GÉNÉRALES</th>
+                            </tr>
+                            <tr id="js-subheader-row">
+                                <th class="js-sem-header"></th>
+                                <th class="col-classe-moy">MOY.</th>
+                                <th class="col-classe-min">MIN.</th>
+                                <th class="col-classe-max">MAX.</th>
+                            </tr>
+                        </thead>
+                        <tbody class="js-table-body">
+                            <!-- Rows injected here -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="footer-row">
+                                <td class="total-cell">MOYENNE GÉNÉRALE</td>
+                                <td class="cell-note cell-avg-val js-avg-20"></td>
+                                <td class="cell-stats-box js-student-count-cell" colspan="3" rowspan="2"></td>
+                                <td class="cell-footer-merged js-mention-display" rowspan="2"></td>
+                            </tr>
+                            <tr class="footer-row">
+                                <td class="rang-cell cell-footer-bottom">RANG</td>
+                                <td class="cell-note cell-footer-bottom js-rang-display"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
 
                 <footer class="bulletin-footer">
                     <div class="bottom-section">
